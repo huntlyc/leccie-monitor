@@ -1,22 +1,246 @@
-.App {
-  text-align: center;
-}
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
 
-.App-logo {
-  height: 40vmin;
-}
 
-.App-header {
+body{
   background-color: #282c34;
-  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  color: white;
+  text-align: center;
+  -webkit-font-smoothing: antialiased; 
+
+  /** simple column layout **/
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-size: 20px;
 }
 
-.App-link {
+
+
+/** screen reader **/
+.sr-only {
+	border: 0 !important;
+	clip: rect(1px, 1px, 1px, 1px) !important; /* 1 */
+	-webkit-clip-path: inset(50%) !important;
+		clip-path: inset(50%) !important;  /* 2 */
+	height: 1px !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	position: absolute !important;
+	width: 1px !important;
+	white-space: nowrap !important;            /* 3 */
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+	clip: auto !important;
+	-webkit-clip-path: none !important;
+		clip-path: none !important;
+	height: auto !important;
+	margin: auto !important;
+	overflow: visible !important;
+	width: auto !important;
+	white-space: normal !important;
+}
+
+/** generic danger red text **/
+.danger{
+  color: #f36969;
+}
+
+/** soften the colour of date values **/
+.date{
+  color: #8c8c8c;
+}
+
+/** general text and heading styles **/
+p{
+  margin-bottom: 0;
+  line-height: 1.2;
+}
+
+h1,h2,th,strong{
+  letter-spacing: 1px; /* make the font a bit more readable */
+}
+/** /general text and heading styles **/
+
+
+
+
+/** running low banner, shows when last reading is lower than 10 **/
+#alert-banner{
+  position: fixed;
+  background-color: #e26465;
+  color: #fff;
+  font-weight: bold;
+  top: 0;
+  left: 0;
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.7rem 0;
+  box-shadow: 0px -2px 10px 0px rgba(255,255,255,0.4);
+  text-shadow: 1px 1px 1px #4e1a1a;
+}
+
+/** if showing the banner, pad down the header a bit **/
+#alert-banner + header{
+  padding-top: 2rem;
+}
+
+header h1{
+  text-shadow: 2px 2px 20px #fff79d; /** pretend to be a lit up sign **/
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* our tag line */
+header h1 + p{
+  color: #828282;
+}
+
+/** reading input form **/
+form{
+  padding: 2rem 0 0 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+input{
+  font-size: 1.3rem;
+  border: none;
+  box-sizing: border-box;
+  border-radius: 0;
+  padding: 0.4rem 1rem;
+  border: 2px solid #fff;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+
+}
+
+input.error{
+  border: 2px solid red;
+  color:  red;
+
+}
+
+button{
+  appearance: none;
+  background: #09d3ac;
+  color: #464646;
+  font-size: 1.3rem;
+  border-radius: 0;
+  padding: 0.4rem 1rem;
+  border: 2px solid #09d3ac;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+button:hover{
+  background-color: #0ae6bc;
+}
+/** /reading input form **/
+
+
+
+/** previous readings section (with table) **/
+section#last-readings{
+  padding: 2rem 0 4rem 0;
+}
+
+table{
+  width: 100%;
+  border-collapse: collapse;;
+}
+
+tr.danger-row{
+  background: #513940;
+}
+
+th,td{
+  padding: 0.9rem 0.6rem;
+  border-bottom: 1px solid #09d3ac;
+}
+
+th{
   color: #09d3ac;
 }
+
+td{
+  border-bottom: 1px solid #333944;
+}
+
+/* turn off border for last row */
+tr:last-child td{
+  border-bottom: none;
+}
+
+td.minus{
+  color: #f36969;
+}
+
+td.positive{
+  color: #a8ffee
+}
+/** /previous readings section (with table) **/
+
+
+/** settings popup, slides in from bottom when main h1 clicked **/
+#dev{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem 0 3rem 0;
+  background-color: #2e3442;
+  box-shadow: 0 0 20px black;
+  transform: translateY(calc(100% + 20px));
+  transition: transform 0.2s ease-in;
+}
+
+#dev.active{
+  transform: translateY(0);
+}
+
+#dev h2{
+  margin-bottom: 3rem;
+}
+
+#dev ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#dev ul li{
+  padding: 0 1rem;
+}
+
+/* ghost style buttons */
+#dev a{
+  text-decoration: none;
+  border: 1px solid #09d3ac;
+  padding: 0.5rem 0.7rem;
+  background-color: #2e3442;
+  color: #09d3ac;
+  transition: background-color 0.2s linear, color 0.2s linear;
+}
+
+#dev a:active,
+#dev a:hover{
+  text-decoration: none;
+  background-color: #09d3ac;
+  color: #2e3442;
+  padding: 0.5rem 0.7rem;
+}
+/** /settings popup **/
