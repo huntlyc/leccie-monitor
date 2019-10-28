@@ -1,156 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import Dexie from 'dexie';  // Dexie is the IndexedDB wrapper
 import './App.css';
+import { ReadingStorage, DBReading } from './components/ReadingStore';
+import { FirebaseContext } from './components/firebase';
+
+
 
 //Simple struct for our Reading object
 interface  Reading{
   date: String;
   reading: String;
 }
-
-//Extention of previous struct for our DB Reading object (with ID)
-interface  DBReading{
-  id?: number,
-  date: String;
-  reading: String;
-}
-
-class ReadingStorage extends Dexie{
-
-  //Define our collection asserting (!:) that its never undefined
-  readings!: Dexie.Table<DBReading, number>;
-
-  constructor(){
-    super('ReadingsDB');
-
-    //Our table(s) schema
-    this.version(1).stores({
-      readings: '++id, date, reading'
-    });
-
-    /**
-     * The following line is needed if your typescript is compiled using
-     * babel instead of tsc e.g. using 'react-create-app'
-     **/    
-    this.readings = this.table("readings");
-  }
-
-  clearData(){
-    this.readings.clear();
-  }
-
-  seedData(){
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/05 23:32')).toISOString(),
-      reading: '50.00'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/12 08:22')).toISOString(),
-      reading: '31.63'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/16 12:22')).toISOString(),
-      reading: '23.20'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/18 19:01')).toISOString(),
-      reading: '61.03'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/20 14:01')).toISOString(),
-      reading: '44.44'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/21 14:01')).toISOString(),
-      reading: '41.03'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/25 17:41')).toISOString(),
-      reading: '37.28'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/26 10:41')).toISOString(),
-      reading: '35.10'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/26 19:41')).toISOString(),
-      reading: '34.19'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/27 10:21')).toISOString(),
-      reading: '29.23'
-    });
-
-    this.readings.add({
-      date: new Date(Date.parse('2019/10/27 11:20')).toISOString(),
-      reading: '29.04'
-    });
-  }
-}
-
-const App: React.FC = () => {
-  const db:ReadingStorage = new ReadingStorage();
-
-  // App state: last reading is the last known input, previous readings is the DB readings
-  const [lastReading, updateLastReading] = useState<Reading | undefined>(undefined);
-  const [previousReadings, updatePreviousReadings] = useState<DBReading[] | undefined>(undefined);
-  const [devMode, updateDevMode] = useState<boolean>(false);
-
-  // Have an effect hook to update our previous readings only if our DB readings changes
-  useEffect(() => {
-    if(!lastReading || (!previousReadings || previousReadings.length === 0) || (previousReadings[0]).date !== lastReading.date){
-      db.readings.toArray().then( (res) => {
-        res.reverse()
-        updatePreviousReadings(res);
-      });
-    }    
-  }, [db.readings, lastReading, previousReadings]);
-
-  // Have an effectHook to update our previous reading if loading for first time
-  useEffect(() => {
-    if (!lastReading && previousReadings) {
-      updateLastReading(previousReadings[0]);
-    }
-  }, [previousReadings, lastReading]);
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    //Grab a hold of our input
-    const lastReading: HTMLInputElement|null = (document.getElementById('reading') as HTMLInputElement);
-    
-    //Save only if 'good' numerical value
-    if (lastReading && !isNaN(parseFloat(lastReading.value))) {
-
-      const readingObj:Reading = {
-        date: new Date().toISOString(), 
-        reading: parseFloat(lastReading.value).toFixed(2)
-      }
-
-      //Update our state
-      updateLastReading(readingObj);
-
-      //Save to db
-      db.readings.add(readingObj);
-
-      //Clean up form
-      lastReading.value = '';
-      lastReading.focus();
-      lastReading.classList.remove('error');
-
-    } else {
-      lastReading.classList.add('error');
-    }
-  };
 
 
   /**
@@ -171,18 +30,18 @@ const App: React.FC = () => {
 
     let h:any = date.getHours();
     if(h < 10) h = `0${h}`;
-    
+
     let i:any = date.getMinutes();
     if(i < 10) i = `0${i}`;
 
 
     /***
      * We want to show 'nice' date diffs, i.e:
-     * today, yesterday, this week... 
-     * 
+     * today, yesterday, this week...
+     *
      * We do this by comparing the current time to the reading time
      * and come up with the following
-     * 
+     *
      * just now - < 1min ago
      * a minute ago - 1min ago
      * $N mins ago - < 1 hour ago
@@ -190,14 +49,14 @@ const App: React.FC = () => {
      * yesterday at hh:mm - <= 24 hours ago (but before midnight of current day)
      * yesterday at hh:mm - 1 day ago
      * $DAY at hh:mm - in the last 7 days but part of the current week
-     * 
+     *
      * dd/mm/yyyy hh:mm - if none of the above match, just show full date
-     * 
+     *
      */
     const dateDiff = curDate.getTime() - date.getTime();
     const dateDiffInMins = Math.round((dateDiff/1000)/60);
 
-    //Happend less than a min ago
+    //happened less than a min ago
     if(dateDiffInMins < 1){
       return 'just now';
     }
@@ -212,16 +71,16 @@ const App: React.FC = () => {
     }
 
     //Happened in the 24hrs
-    const dateDiffInHours = Math.round((dateDiffInMins/60));      
+    const dateDiffInHours = Math.round((dateDiffInMins/60));
     if(dateDiffInHours <= 24){
-      //check if happend today (i.e from midnight)
+      //check if happened today (i.e from midnight)
       if( date.getHours() > 0 && date.getHours() < curDate.getHours()){
         return `today at ${h}:${i}`;
       }else{
         return `yesterday at ${h}:${i}`;
       }
     }
-  
+
     const dateDiffInDays = Math.round((dateDiffInHours/24));
 
     //Happened 1 day ago (yesterday)
@@ -245,6 +104,67 @@ const App: React.FC = () => {
     return `${d}/${m}/${date.getFullYear()} ${h}:${i}`;
   }
 
+
+
+
+const App: React.FC = () => {
+  const db:ReadingStorage = new ReadingStorage();
+
+  // App state: last reading is the last known input, previous readings is the DB readings
+  const [lastReading, updateLastReading] = useState<Reading | undefined>(undefined);
+  const [previousReadings, updatePreviousReadings] = useState<DBReading[] | undefined>(undefined);
+  const [devMode, updateDevMode] = useState<boolean>(false);
+
+  // Have an effect hook to update our previous readings only if our DB readings changes
+  useEffect(() => {
+    if(!lastReading || (!previousReadings || previousReadings.length === 0) || (previousReadings[0]).date !== lastReading.date){
+      db.readings.toArray().then( (res) => {
+        res.reverse()
+        updatePreviousReadings(res);
+      });
+    }
+  }, [db.readings, lastReading, previousReadings]);
+
+  // Have an effectHook to update our previous reading if loading for first time
+  useEffect(() => {
+    if (!lastReading && previousReadings) {
+      updateLastReading(previousReadings[0]);
+    }
+  }, [previousReadings, lastReading]);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    //Grab a hold of our input
+    const lastReading: HTMLInputElement|null = (document.getElementById('reading') as HTMLInputElement);
+
+    //Save only if 'good' numerical value
+    if (lastReading && !isNaN(parseFloat(lastReading.value))) {
+
+      const readingObj:Reading = {
+        date: new Date().toISOString(),
+        reading: parseFloat(lastReading.value).toFixed(2)
+      }
+
+      //Update our state
+      updateLastReading(readingObj);
+
+      //Save to db
+      db.readings.add(readingObj);
+
+      //Clean up form
+      lastReading.value = '';
+      lastReading.focus();
+      lastReading.classList.remove('error');
+
+    } else {
+      lastReading.classList.add('error');
+    }
+  };
+
+
+
+
   /**
    * Returns JSX for rendering previous readings table
    */
@@ -265,7 +185,7 @@ const App: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {previousReadings.map((reading, i) => { 
+            {previousReadings.map((reading, i) => {
 
               let clsName:string = ''
               let txtDiff:string = ' \u2014 ';
@@ -287,7 +207,7 @@ const App: React.FC = () => {
                 }else{
                   txtDiff = `${diff.toFixed(2)}`;
                   clsName = 'minus';
-                }                
+                }
               }
 
               return (
@@ -300,7 +220,7 @@ const App: React.FC = () => {
             })}
           </tbody>
         </table>
-      </section>     
+      </section>
     );
   }
 
@@ -346,6 +266,11 @@ const App: React.FC = () => {
           <li><a href="#clear" onClick={devClearData}>Clear Data</a></li>
           <li><a href="#seed" onClick={devSeedData}>Seed Data</a></li>
         </ul>
+        <FirebaseContext.Consumer>
+          {firebase => {
+            return <div>I've access to Firebase and render something.</div>;
+          }}
+        </FirebaseContext.Consumer>
       </section>
     </div>
   );
