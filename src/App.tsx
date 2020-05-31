@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { ReadingStorage, DBReading } from './components/ReadingStore';
 import { FirebaseContext } from './components/firebase';
+import { formatRelativeToDate } from './Utils'
 
 
 
@@ -10,102 +11,6 @@ interface  Reading{
   date: String;
   reading: String;
 }
-
-
-  /**
-   * Returns date/time string formatted to 'dd/mm/yyyy hh:mm'
-   * @param dateStr String - date string to format
-   * @returns formattedDateStr String - dateStr formatted to 'dd/mm/yyyy hh:mm'
-   */
-  const formatDate = (dateStr: String) => {
-    const curDate = new Date();
-    const date = new Date(Date.parse(dateStr as string));
-
-    // zero pad our days, months, hours, and minutes if < 10.  e.g '02' instead of '2'
-    let d:any = date.getDate();
-    if(d < 10) d = `0${d}`;
-
-    let m:any = date.getMonth() + 1;
-    if(m < 10) m = `0${m}`;
-
-    let h:any = date.getHours();
-    if(h < 10) h = `0${h}`;
-
-    let i:any = date.getMinutes();
-    if(i < 10) i = `0${i}`;
-
-
-    /***
-     * We want to show 'nice' date diffs, i.e:
-     * today, yesterday, this week...
-     *
-     * We do this by comparing the current time to the reading time
-     * and come up with the following
-     *
-     * just now - < 1min ago
-     * a minute ago - 1min ago
-     * $N mins ago - < 1 hour ago
-     * today at hh:mm - <= 24 hours ago, but after midnight of the current day
-     * yesterday at hh:mm - <= 24 hours ago (but before midnight of current day)
-     * yesterday at hh:mm - 1 day ago
-     * $DAY at hh:mm - in the last 7 days but part of the current week
-     *
-     * dd/mm/yyyy hh:mm - if none of the above match, just show full date
-     *
-     */
-    const dateDiff = curDate.getTime() - date.getTime();
-    const dateDiffInMins = Math.round((dateDiff/1000)/60);
-
-    //happened less than a min ago
-    if(dateDiffInMins < 1){
-      return 'just now';
-    }
-
-    //Happened less than an hour ago
-    if(dateDiffInMins < 60){
-      if(dateDiffInMins === 1){
-        return `a minute ago`;
-
-      }
-      return `${dateDiffInMins} minutes ago`;
-    }
-
-    //Happened in the 24hrs
-    const dateDiffInHours = Math.round((dateDiffInMins/60));
-    if(dateDiffInHours <= 24){
-      //check if happened today (i.e from midnight)
-      if( date.getHours() > 0 && date.getHours() < curDate.getHours()){
-        return `today at ${h}:${i}`;
-      }else{
-        return `yesterday at ${h}:${i}`;
-      }
-    }
-
-    const dateDiffInDays = Math.round((dateDiffInHours/24));
-
-    //Happened 1 day ago (yesterday)
-    if(dateDiffInDays === 1){
-      return `yesterday at ${h}:${i}`;
-    }
-
-    //Happened in the last 7 days
-    if(dateDiffInDays < 7){
-      const curDayOfTheWeek = curDate.getDay() === 0 ? 7 : curDate.getDay();
-      const readingDayOfTheWeek = date.getDay() === 0 ? 7 : date.getDay();
-      // check if current week (mon - sun)
-      if(curDayOfTheWeek - readingDayOfTheWeek >  0){
-        const fullDayName =  new Intl.DateTimeFormat('en-US', { weekday: 'long'}).format(date);
-        return `${fullDayName.toLowerCase()} at ${h}:${i}`;
-
-      }
-    }
-
-    //Happened at some point, show full date
-    return `${d}/${m}/${date.getFullYear()} ${h}:${i}`;
-  }
-
-
-
 
 const App: React.FC = () => {
   const db:ReadingStorage = new ReadingStorage();
@@ -214,7 +119,7 @@ const App: React.FC = () => {
                 <tr  className={i === 1 && lastReading && parseFloat(lastReading.reading as string) < 10 ? 'danger-row': ''} key={reading.date as string}>
                   <td>&pound;{reading.reading}</td>
                   <td className={clsName}>{txtDiff}</td>
-                  <td className="date">{formatDate(reading.date)}</td>
+                  <td className="date">{formatRelativeToDate(reading.date as string, new Date().toISOString())}</td>
                 </tr>
               );
             })}
@@ -257,7 +162,7 @@ const App: React.FC = () => {
           <input type="text" id="reading" placeholder="Reading (e.g. 34.22)" />
           <button><span className="sr-only">Submit Reading</span>+</button>
         </form>
-        {lastReading && <p>Last reading: <strong className={parseFloat(lastReading.reading as string) < 10 ? 'danger': ''}>&pound;{lastReading.reading}</strong> - <span className="date">{formatDate(lastReading.date)}</span></p>}
+        {lastReading && <p>Last reading: <strong className={parseFloat(lastReading.reading as string) < 10 ? 'danger': ''}>&pound;{lastReading.reading}</strong> - <span className="date">{formatRelativeToDate(lastReading.date as string, new Date().toISOString())}</span></p>}
       </header>
       {previousReadings && renderPreviousReadings()}
       <section id="dev" className={devMode ? 'active' : ''}>
