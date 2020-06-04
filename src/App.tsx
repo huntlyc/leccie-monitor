@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { ReadingStorage, DBReading } from './components/ReadingStore';
-import { FirebaseContext } from './components/firebase';
+// import { FirebaseContext } from './components/firebase';
 import { formatRelativeToDate } from './Utils'
-
 
 
 //Simple struct for our Reading object
@@ -11,6 +10,7 @@ interface  Reading{
   date: String;
   reading: String;
 }
+
 
 const App: React.FC = () => {
   const db:ReadingStorage = new ReadingStorage();
@@ -40,6 +40,12 @@ const App: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const resetInputForm = function(lastReading: HTMLInputElement) {
+      lastReading.value = '';
+      lastReading.focus();
+      lastReading.classList.remove('error');
+    };
+
     //Grab a hold of our input
     const lastReading: HTMLInputElement|null = (document.getElementById('reading') as HTMLInputElement);
 
@@ -58,16 +64,12 @@ const App: React.FC = () => {
       db.readings.add(readingObj);
 
       //Clean up form
-      lastReading.value = '';
-      lastReading.focus();
-      lastReading.classList.remove('error');
+      resetInputForm(lastReading);
 
     } else {
       lastReading.classList.add('error');
     }
   };
-
-
 
 
   /**
@@ -77,6 +79,43 @@ const App: React.FC = () => {
 
     //If no readings, explain to the user to enter their first reading
     if(!previousReadings || previousReadings.length === 0) return <p>Enter your first reading to get started!</p>;
+
+    const renderPreviousReadingTableRow = (reading: DBReading, currentIndex: number): JSX.Element => {
+
+      let clsName: string = '';
+      let txtDiff: string = ' \u2014 ';
+
+      //dont (obviously) run on the first result as there's no difference!!
+      if (currentIndex < previousReadings.length - 1) {
+
+        let diff: number = 0;
+        let curReading: number = parseFloat(reading.reading as string);
+        let prevReading: number = parseFloat(previousReadings[++currentIndex].reading as string);
+
+        diff = curReading - prevReading;
+
+        if (diff === 0) {
+          txtDiff = '';
+        }
+        else if (diff > 0) {
+          txtDiff = `+${diff.toFixed(2)}`;
+          clsName = 'positive';
+        }
+        else {
+          txtDiff = `${diff.toFixed(2)}`;
+          clsName = 'minus';
+        }
+      }
+
+      return (
+        <tr className={currentIndex === 1 && lastReading && parseFloat(lastReading.reading as string) < 10 ? 'danger-row' : ''} key={reading.date as string}>
+          <td>&pound;{reading.reading}</td>
+          <td className={clsName}>{txtDiff}</td>
+          <td className="date">{formatRelativeToDate(reading.date as string, new Date().toISOString())}</td>
+        </tr>
+      );
+    };
+
 
     return(
       <section id="last-readings">
@@ -90,39 +129,7 @@ const App: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {previousReadings.map((reading, i) => {
-
-              let clsName:string = ''
-              let txtDiff:string = ' \u2014 ';
-
-              //dont (obviously) run on the first result as there's no difference!!
-              if(i < previousReadings.length -1){
-
-                let diff:number = 0;
-                let curReading:number = parseFloat(reading.reading as string);
-                let prevReading:number = parseFloat(previousReadings[++i].reading as string);
-
-                diff = curReading - prevReading;
-
-                if(diff === 0){
-                  txtDiff = '';
-                }else if(diff > 0){
-                  txtDiff = `+${diff.toFixed(2)}`;
-                  clsName = 'positive';
-                }else{
-                  txtDiff = `${diff.toFixed(2)}`;
-                  clsName = 'minus';
-                }
-              }
-
-              return (
-                <tr  className={i === 1 && lastReading && parseFloat(lastReading.reading as string) < 10 ? 'danger-row': ''} key={reading.date as string}>
-                  <td>&pound;{reading.reading}</td>
-                  <td className={clsName}>{txtDiff}</td>
-                  <td className="date">{formatRelativeToDate(reading.date as string, new Date().toISOString())}</td>
-                </tr>
-              );
-            })}
+            {previousReadings.map(renderPreviousReadingTableRow)}
           </tbody>
         </table>
       </section>
@@ -138,6 +145,7 @@ const App: React.FC = () => {
     }
   }
 
+
   const devSeedData = (e: React.MouseEvent) => {
     e.preventDefault();
     if(window.confirm('Are you sure? No takebaks!')){
@@ -146,6 +154,7 @@ const App: React.FC = () => {
     }
   }
 
+  
   const handleDev = (e: React.MouseEvent) => {
     updateDevMode(!devMode);
   }
@@ -171,14 +180,15 @@ const App: React.FC = () => {
           <li><a href="#clear" onClick={devClearData}>Clear Data</a></li>
           <li><a href="#seed" onClick={devSeedData}>Seed Data</a></li>
         </ul>
-        <FirebaseContext.Consumer>
+        {/* <FirebaseContext.Consumer>
           {firebase => {
             return <div>I've access to Firebase and render something.</div>;
           }}
-        </FirebaseContext.Consumer>
+        </FirebaseContext.Consumer> */}
       </section>
     </div>
   );
 }
 
 export default App;
+

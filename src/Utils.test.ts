@@ -9,7 +9,7 @@ test('formats relative dates', () => {
 
     //Ensure exception on time travel entries
     function testFutureDate(){
-        formatRelativeToDate('2020/02/01 09:07:01','2020/02/01 09:07:00')
+        formatRelativeToDate('2020/02/01 09:07:01','2020/02/01 09:07:00');
     }
     expect(testFutureDate).toThrow(Error);
 
