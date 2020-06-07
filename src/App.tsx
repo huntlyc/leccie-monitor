@@ -18,12 +18,16 @@ const App: React.FC = () => {
 
     // Have an effect hook to update our previous readings only if our DB readings changes
     useEffect(() => {
-        if (!latestReading || (!previousReadings || previousReadings.length === 0) || (previousReadings[0]).date !== latestReading.date) {
+        const noPreviousReadings = (!previousReadings || previousReadings.length === 0); 
+        const readingDatesMismatch = (latestReading && previousReadings && previousReadings.length > 0 && (previousReadings[0]).date !== latestReading.date);
+
+        if (!latestReading || noPreviousReadings || readingDatesMismatch) {
             db.readings.toArray().then((res) => {
                 res.reverse()
                 updatePreviousReadings(res);
             });
         }
+
     }, [db.readings, latestReading, previousReadings]);
 
     // Have an effectHook to update our previous reading if loading for first time
@@ -81,8 +85,8 @@ const App: React.FC = () => {
             <header className="App-header">
                 <h1 onClick={handleDev}>Leccie Monitor</h1>
                 <p>Don&rsquo;t be left in the dark&hellip;</p>
-                <ReadingForm onSuccess={saveReading} />
                 {latestReading && <p>Last reading: <strong className={parseFloat(latestReading.reading as string) < 10 ? 'danger' : ''}>&pound;{latestReading.reading}</strong> - <span className="date">{formatRelativeToDate(latestReading.date as string, new Date().toISOString())}</span></p>}
+                <ReadingForm onSuccess={saveReading} />
             </header>
             <ReadingTable previousReadings={previousReadings} lastReading={latestReading}/>
             <section id="dev" className={devMode ? 'active' : ''}>
