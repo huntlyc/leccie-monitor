@@ -1,6 +1,6 @@
 import React from 'react';
-import IReading from '../IReading';
-import {formatRelativeToDate} from '../../Utils';
+import IReading from './IReading';
+import {formatRelativeToDate} from '../Utils';
 
 const ReadingTable = function(props: any){
 

@@ -1,7 +1,7 @@
 import Dexie from 'dexie';
 Dexie.dependencies.indexedDB = require('fake-indexeddb')
 Dexie.dependencies.IDBKeyRange = require('fake-indexeddb/lib/FDBKeyRange')
-import { DBReading } from '../ReadingStore';
+import { DBReading } from './ReadingStore';
 
 export class ReadingStorage extends Dexie {
     //Define our collection asserting (!:) that its never undefined
