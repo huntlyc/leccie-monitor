@@ -2,11 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import { ReadingStorage } from './components/ReadingStore';
 
 import * as serviceWorker from './serviceWorker';
 
+
+const db: ReadingStorage = new ReadingStorage();
+
 ReactDOM.render(
-    <App />,
+    <App dataStore={db} />,
     document.getElementById('root')
 );
 

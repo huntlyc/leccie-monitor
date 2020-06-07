@@ -4,7 +4,7 @@ export interface  DBReading{
     id?: number,
     date: String;
     reading: String;
-  }
+}
 
 export class ReadingStorage extends Dexie {
   //Define our collection asserting (!:) that its never undefined
