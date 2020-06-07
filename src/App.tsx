@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { ReadingStorage, DBReading } from './components/ReadingStore';
-// import { FirebaseContext } from './components/firebase';
 import { formatRelativeToDate } from './Utils'
 import ReadingForm from './components/InputForm';
 import ReadingTable from './components/ReadingsTable';
@@ -95,11 +94,6 @@ const App: React.FC = () => {
                     <li><a href="#clear" onClick={devClearData}>Clear Data</a></li>
                     <li><a href="#seed" onClick={devSeedData}>Seed Data</a></li>
                 </ul>
-                {/* <FirebaseContext.Consumer>
-          {firebase => {
-            return <div>I've access to Firebase and render something.</div>;
-          }}
-        </FirebaseContext.Consumer> */}
             </section>
         </div>
     );
