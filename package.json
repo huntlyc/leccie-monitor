@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/jest": "25.2.3",
-    "@types/node": "14.0.11",
-    "@types/react": "16.9.35",
+    "@types/jest": "26.0.0",
+    "@types/node": "14.0.13",
+    "@types/react": "16.9.36",
     "@types/react-dom": "16.9.8",
     "dexie": "^3.0.1",
     "react": "^16.11.0",
@@ -16,7 +16,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --env=jest-environment-jsdom-sixteen",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -37,6 +37,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.9.0",
     "@testing-library/react": "^10.2.1",
-    "fake-indexeddb": "^3.0.1"
+    "fake-indexeddb": "^3.0.1",
+    "jest-environment-jsdom-sixteen": "^1.0.3"
   }
 }
