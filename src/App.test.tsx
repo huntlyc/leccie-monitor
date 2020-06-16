@@ -1,7 +1,7 @@
 import React from 'react';
 import App from './App';
 import { ReadingStorage } from './components/TestReadingStore';
-import { render, fireEvent, waitFor, screen, wait, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
 const db: ReadingStorage = new ReadingStorage();
