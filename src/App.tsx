@@ -11,34 +11,36 @@ type AppProps = {
 }
 
 const App: FunctionComponent<AppProps> = ({dataStore}) => {
-    const [previousReadings, updatePreviousReadings] = useState<DBReading[] | undefined>(undefined);
+    const [previousReadings, updatePreviousReadings] = useState<DBReading[]>([]);
 
     const addNewReading = function(reading: string){
-        saveReading(reading);
-        refreshStateFromDB(dataStore);
-    };
-
-    const saveReading = function(reading: string){
         const readingObj: IReading = {
             date: new Date().toISOString(),
             reading: reading
         }
-
+        
         dataStore.readings.add(readingObj);
-    };
 
-    const refreshStateFromDB = async function(dataStore:ReadingStorage){
-        const DBRes = await dataStore.readings.toArray();
+        let readings = previousReadings.slice(0);
+        readings.unshift(readingObj);
 
-        if(DBRes.length > 0){
-            updatePreviousReadings(DBRes.reverse());
-        }
-    };
+        updatePreviousReadings(readings)
+    };    
 
     // Ensure state and db are sync'd on first run
     useEffect(() => {
-        refreshStateFromDB(dataStore);
-    }, [dataStore]);
+        let isReadingStore = true;
+
+        dataStore.readings.toArray().then((DBRes) => {
+            if(isReadingStore){
+                if(DBRes.length > 0){
+                    updatePreviousReadings(DBRes.reverse());
+                }
+            }
+        });
+
+        return () => { isReadingStore = false } ;
+    }, []);
 
     return (
         <div className="App">
