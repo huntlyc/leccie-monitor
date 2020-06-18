@@ -9,19 +9,21 @@ const ReadingForm = function (props: any) {
 
         //Save only if 'good' numerical value
         if (readingInput){
-            if (!isNaN(parseFloat(readingInput.value))) {
 
-                const reading = parseFloat(readingInput.value).toFixed(2);
-
-                props.onSuccess(reading);
-
+            const resetForm = () => {
                 //reset the form
                 readingInput.value = '';
                 readingInput.focus();
                 readingInput.classList.remove('error');
+            };
 
+            if (!isNaN(parseFloat(readingInput.value))) {
+                const reading = parseFloat(readingInput.value).toFixed(2);
+                props.onSuccess(reading);
+                resetForm();
             } else if(readingInput.value !== '' && readingInput.value.toLowerCase() === 'clear') {
                 props.onClear();
+                resetForm();
             } else {
                 readingInput.classList.add('error');
             }

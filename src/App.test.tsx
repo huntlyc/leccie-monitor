@@ -112,6 +112,10 @@ describe('On submitting a reading on first run', () => {
         submitValidReading();        
     });
     
+    test('it should clear the input field', () => {
+        expect(screen.getByRole('textbox')).toHaveValue('');
+    });
+
     test('it should show the reading in the latest reading field ', async () => {
         expect(await renderedDOM.findByTestId('last-reading')).toBeInTheDocument();
         expect(await renderedDOM.findByTestId('last-reading-price')).toBeInTheDocument();
@@ -139,6 +143,10 @@ describe('On submitting "clear" [From seeded DB]',  () => {
     beforeEach(async() => {
         await renderAppWithSeededData();       
         submitClearCommand();
+    });
+
+    test('it should clear the input field', () => {
+        expect(screen.getByRole('textbox')).toHaveValue('');
     });
 
     test('it should not have a previous readings table', () => {
