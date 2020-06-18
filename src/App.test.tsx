@@ -105,7 +105,6 @@ describe('On submitting a reading on first run', () => {
     };
     let renderedDOM: RenderResult;
 
-
     beforeEach(async() => {
         renderedDOM = render(<App dataStore={fakeIndexDB} />);
         expect(await renderedDOM.findByTestId('no-reading-message')).toBeInTheDocument();
