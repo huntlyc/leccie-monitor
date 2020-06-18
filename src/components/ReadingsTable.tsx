@@ -4,7 +4,7 @@ import {formatRelativeToDate} from '../Utils';
 
 const ReadingTable = function(props: any){
 
-    if (!props.previousReadings || props.previousReadings.length === 0) return <p>Enter your first reading to get started!</p>;
+    if (!props.previousReadings || props.previousReadings.length === 0) return <p data-testid="no-reading-message">Enter your first reading to get started!</p>;
 
     const renderPreviousReadingTableRow = (reading: IReading, currentIndex: number): JSX.Element => {
 
