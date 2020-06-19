@@ -33,7 +33,7 @@ const ReadingForm = function (props: any) {
     return (
         <form onSubmit={handleFormSubmit}>
             <label htmlFor="reading" className="sr-only">Latest Reading</label>
-            <input type="text" id="reading" placeholder="Reading (e.g. 34.22)" />
+            <input id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Reading (e.g. 34.22)" />
             <button><span className="sr-only">Submit Reading</span>+</button>
         </form>
     );
