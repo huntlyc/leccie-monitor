@@ -49,7 +49,7 @@ const renderAppWithSeededData = async() => {
 /**
  * Main Tests
  */
-test('it renders without crashing', async () => {
+test('it renders without crashing', () => {
     render(<App dataStore={fakeIndexDB} />);
     expect(screen.queryAllByRole('heading')[0]).toHaveTextContent('Leccie Monitor');
 });
