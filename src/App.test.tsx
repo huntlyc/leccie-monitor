@@ -31,9 +31,9 @@ const DB = {
 
         await Promise.all([p1,p2,p3,p4]);
     },
-
     clear: () => fakeIndexDB.readings.clear(),
-}
+};
+
 
 /**
  * Seeds a datastore before rendering the app.
@@ -49,11 +49,11 @@ const renderAppWithSeededData = async() => {
 /**
  * Main Tests
  */
-
 test('it renders without crashing', async () => {
     render(<App dataStore={fakeIndexDB} />);
     expect(screen.queryAllByRole('heading')[0]).toHaveTextContent('Leccie Monitor');
 });
+
 
 describe('On first run', () => {
 
@@ -62,9 +62,9 @@ describe('On first run', () => {
         expect(screen.queryByRole('table')).not.toBeInTheDocument();
     });
 
-    test('it should not show the alert bar', async () => {
+    test('it should not show the alert bar',  () => {
         render(<App dataStore={fakeIndexDB} />);
-        expect(await screen.queryByTestId('alert-banner')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('alert-banner')).not.toBeInTheDocument();
     });
 
     test('it should show "enter first reading" message', () => {
@@ -73,6 +73,7 @@ describe('On first run', () => {
     });
 
 });
+
 
 describe('On loading with previous saved values [from seeded DB]', () => {
     beforeEach(() => renderAppWithSeededData());
@@ -132,6 +133,7 @@ describe('On submitting a reading on first run', () => {
 
     afterEach(() => DB.clear());
 });
+
 
 describe('On submitting "clear" [From seeded DB]',  () => {
     const submitClearCommand = () => {
