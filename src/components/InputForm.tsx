@@ -10,16 +10,14 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) =
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        //Grab a hold of our input
         const readingInput: HTMLInputElement | null = (document.getElementById('reading') as HTMLInputElement);
 
-        //Save only if 'good' numerical value
         if (readingInput){
-
+            
             const resetForm = () => {
-                //reset the form
                 readingInput.value = '';
                 readingInput.focus();
+
                 updateError(false);
             };
 

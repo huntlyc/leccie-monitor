@@ -51,7 +51,7 @@ test('it handles invalid submission helpfully', () =>{
     const input = screen.getByRole('textbox');
     const button = screen.getByRole('button');
 
-    //Send invalid event
+    //Submit invalid entry
     fireEvent.change(input, { target: { value: 'bob' } });
     fireEvent.click(button);
 
@@ -72,7 +72,7 @@ test('it recovers from an invalid state on next good value', () =>{
     const input = screen.getByRole('textbox');
     const button = screen.getByRole('button');
 
-    //Send invalid event
+    //Submit invalid entry
     fireEvent.change(input, { target: { value: 'bob' } });
     fireEvent.click(button);
 
@@ -82,6 +82,7 @@ test('it recovers from an invalid state on next good value', () =>{
     expect(input.classList.contains('error')).toBeTruthy();
     expect(screen.getByText('Please enter number or "Clear"'));
 
+    //Send valid entry
     fireEvent.change(input, { target: { value: '1.04' } });
     fireEvent.click(button);
 
