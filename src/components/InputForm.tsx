@@ -6,42 +6,42 @@ type ReadingFormProps = {
 };
 
 const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) => {
-    const [isError, updateError] = useState<boolean>(false);
-    const handleFormSubmit = (e: React.FormEvent) => {
+    const [invalidInput, updateErrorStatusTo] = useState<boolean>(false);
+    const onReadingSubmission = (e: React.FormEvent) => {
         e.preventDefault();
 
         const readingInput: HTMLInputElement | null = (document.getElementById('reading') as HTMLInputElement);
 
         if (readingInput){
-            
+
             const resetForm = () => {
                 readingInput.value = '';
                 readingInput.focus();
 
-                updateError(false);
+                updateErrorStatusTo(false);
             };
 
             if (!isNaN(parseFloat(readingInput.value))) {
-                const reading = parseFloat(readingInput.value).toFixed(2);
-                onSuccess(reading);
+                const readingValue = parseFloat(readingInput.value).toFixed(2);
+                onSuccess(readingValue);
                 resetForm();
             } else if(readingInput.value !== '' && readingInput.value.toLowerCase() === 'clear') {
                 onClear();
                 resetForm();
             } else {
-                updateError(true);
+                updateErrorStatusTo(true);
             }
         }
     };
 
     return (
-        <form onSubmit={handleFormSubmit}>
+        <form onSubmit={onReadingSubmission}>
             <div className="inputrow">
                 <label htmlFor="reading" className="sr-only">Latest Reading</label>
-                <input className={isError ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Reading (e.g. 34.22)" />
+                <input className={invalidInput ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Reading (e.g. 34.22)" />
                 <button><span className="sr-only">Submit Reading</span>+</button>
             </div>
-            {isError && <p className="error-message">Please enter number or "Clear"</p>}
+            {invalidInput && <p className="error-message">Please enter number or "Clear"</p>}
         </form>
     );
 }
