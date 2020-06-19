@@ -104,10 +104,18 @@ header h1 + p{
 form{
   padding: 2rem 0 0 0;
 
+  
+}
+
+form .inputrow{
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+form .error-message{
+  color: #f36969;
 }
 
 input{
@@ -123,8 +131,8 @@ input{
 }
 
 input.error{
-  border: 2px solid red;
-  color:  red;
+  border: 2px solid #f36969;
+  color:  #f36969;
 
 }
 

@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { FunctionComponent, useState } from 'react';
 
-const ReadingForm = function (props: any) {
+type ReadingFormProps = {
+    onSuccess: (reading: string) => void,
+    onClear: () => void,
+};
+
+const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) => {
+    const [isError, updateError] = useState<boolean>(false);
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -14,27 +20,30 @@ const ReadingForm = function (props: any) {
                 //reset the form
                 readingInput.value = '';
                 readingInput.focus();
-                readingInput.classList.remove('error');
+                updateError(false);
             };
 
             if (!isNaN(parseFloat(readingInput.value))) {
                 const reading = parseFloat(readingInput.value).toFixed(2);
-                props.onSuccess(reading);
+                onSuccess(reading);
                 resetForm();
             } else if(readingInput.value !== '' && readingInput.value.toLowerCase() === 'clear') {
-                props.onClear();
+                onClear();
                 resetForm();
             } else {
-                readingInput.classList.add('error');
+                updateError(true);
             }
         }
     };
 
     return (
         <form onSubmit={handleFormSubmit}>
-            <label htmlFor="reading" className="sr-only">Latest Reading</label>
-            <input id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Reading (e.g. 34.22)" />
-            <button><span className="sr-only">Submit Reading</span>+</button>
+            <div className="inputrow">
+                <label htmlFor="reading" className="sr-only">Latest Reading</label>
+                <input className={isError ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Reading (e.g. 34.22)" />
+                <button><span className="sr-only">Submit Reading</span>+</button>
+            </div>
+            {isError && <p className="error-message">Please enter number or "Clear"</p>}
         </form>
     );
 }
