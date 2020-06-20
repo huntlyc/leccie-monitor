@@ -1,9 +1,11 @@
 import React, { FunctionComponent, useState } from 'react';
 
+
 type ReadingFormProps = {
     onSuccess: (reading: string) => void,
     onClear: () => void,
 };
+
 
 const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) => {
     const [invalidInput, updateErrorStatusTo] = useState<boolean>(false);
