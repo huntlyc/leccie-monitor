@@ -3,7 +3,7 @@
 import React from 'react';
 import App from './App';
 import { TestLocalStorageReadingStorage } from './components/TestReadingStore';
-import { render, screen, fireEvent, waitFor, cleanup, RenderResult } from '@testing-library/react'
+import { render, screen, fireEvent, RenderResult } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect';
 import { IReadingStore } from './components/ReadingStore';
 
