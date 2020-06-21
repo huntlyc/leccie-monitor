@@ -14,23 +14,23 @@ const fakeIndexDB: IReadingStore = new TestLocalStorageReadingStorage();
 // Helper DB functions
 const DB = {
     seed: async() => { 
-        let p1 = fakeIndexDB.clearAllReadings();
-        let p2 =  fakeIndexDB.addReading({
+        let clearDB = fakeIndexDB.clearAllReadings();
+        let addOldestReading =  fakeIndexDB.addReading({
             date: new Date(Date.parse('2019/10/26 19:41')).toISOString(),
             reading: '34.19'
         });
 
-        let p3 = fakeIndexDB.addReading({
+        let addNewerReading = fakeIndexDB.addReading({
             date: new Date(Date.parse('2019/10/27 10:21')).toISOString(),
             reading: '29.23'
         });
 
-        let p4 = fakeIndexDB.addReading({
+        let addLatestReading = fakeIndexDB.addReading({
             date: new Date(Date.parse('2019/10/27 11:20')).toISOString(),
             reading: '1.04'
         });
 
-        await Promise.all([p1,p2,p3,p4]);
+        await Promise.all([clearDB,addOldestReading,addNewerReading,addLatestReading]);
     },
     clear: () => fakeIndexDB.clearAllReadings(),
 };
