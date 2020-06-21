@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import { ReadingStorage } from './components/ReadingStore';
+import { LocalStorageReadingStore, IReadingStore } from './components/ReadingStore';
 
 import * as serviceWorker from './serviceWorker';
 
 
-const db: ReadingStorage = new ReadingStorage();
+const db: IReadingStore = new LocalStorageReadingStore();
 
 ReactDOM.render(
     <App dataStore={db} />,

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { DBReading } from './ReadingStore';
 import { formatRelativeToDate } from '../Utils';
 

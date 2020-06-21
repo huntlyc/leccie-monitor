@@ -2,36 +2,37 @@
 
 import React from 'react';
 import App from './App';
-import { ReadingStorage } from './components/TestReadingStore';
+import { TestLocalStorageReadingStorage } from './components/TestReadingStore';
 import { render, screen, fireEvent, waitFor, cleanup, RenderResult } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect';
+import { IReadingStore } from './components/ReadingStore';
 
 let seededAppDOM: RenderResult;
 
-const fakeIndexDB: ReadingStorage = new ReadingStorage();
+const fakeIndexDB: IReadingStore = new TestLocalStorageReadingStorage();
 
 // Helper DB functions
 const DB = {
     seed: async() => { 
-        let p1 = fakeIndexDB.readings.clear();
-        let p2 =  fakeIndexDB.readings.add({
+        let p1 = fakeIndexDB.clearAllReadings();
+        let p2 =  fakeIndexDB.addReading({
             date: new Date(Date.parse('2019/10/26 19:41')).toISOString(),
             reading: '34.19'
         });
 
-        let p3 = fakeIndexDB.readings.add({
+        let p3 = fakeIndexDB.addReading({
             date: new Date(Date.parse('2019/10/27 10:21')).toISOString(),
             reading: '29.23'
         });
 
-        let p4 = fakeIndexDB.readings.add({
+        let p4 = fakeIndexDB.addReading({
             date: new Date(Date.parse('2019/10/27 11:20')).toISOString(),
             reading: '1.04'
         });
 
         await Promise.all([p1,p2,p3,p4]);
     },
-    clear: () => fakeIndexDB.readings.clear(),
+    clear: () => fakeIndexDB.clearAllReadings(),
 };
 
 
