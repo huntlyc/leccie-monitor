@@ -1,29 +1,29 @@
 // Misc util functions
 
+
+/**
+ * @typedef {Object} DatePiecesObject - broken down date object
+ * @property {string} d - day
+ * @property {string} m - month
+ * @property {string} y - year
+ * @property {string} h - hours (24)
+ * @property {string} m - minutes
+ */
 type DatePiecesObject = {
-  d: string,
-  m: string,
-  y: string,
-  h: string,
-  i: string,
+  d: string;
+  m: string;
+  y: string;
+  h: string;
+  i: string;
 };
 
 /**
- * Given date string, returns zero padded values 
- * 
- * Returns object with date pieces:
- * {
- *   d: day,
- *   m: month,
- *   y: year,
- *   h: hour,
- *   i: minute,
- * }
+ * Given date string, returns zero padded values in object form 
  * 
  * @param {string} dateString  - parsable date string
  * @returns {DatePiecesObject} parsed date in zero-padded object
  */
-export const getDatePieces = function(dateString: string): DatePiecesObject{
+export const getDatePieces = (dateString: string): DatePiecesObject => {
 
     const date = new Date(Date.parse(dateString));
 
