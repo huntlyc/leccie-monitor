@@ -11,8 +11,17 @@ type DatePiecesObject = {
 /**
  * Given date string, returns zero padded values 
  * 
- * Returns object with PHP style date pieces: h - hour, i - minute
- * @param dateString string - parsable date string
+ * Returns object with date pieces:
+ * {
+ *   d: day,
+ *   m: month,
+ *   y: year,
+ *   h: hour,
+ *   i: minute,
+ * }
+ * 
+ * @param {string} dateString  - parsable date string
+ * @returns {DatePiecesObject} parsed date in zero-padded object
  */
 export const getDatePieces = function(dateString: string): DatePiecesObject{
 
@@ -30,13 +39,11 @@ export const getDatePieces = function(dateString: string): DatePiecesObject{
 /**
  * Given two dates, return relative format (today at.., yesterday at... e.t.c)
  * 
- * @param dateStr String - date string to format
- * @param relativeDateString String - date string to format
- * @returns formattedDateStr String - dateStr formatted to 'dd/mm/yyyy hh:mm'
+ * @param {string} dateStr - date string to format
+ * @param {string} relativeDateString - date string to format
+ * @return {string} human readable date in a relative format
  */
 export const formatRelativeToDate = (dateString: string, relativeDateString: string) => {
-  
-
   const relativeDateTimeStamp = Date.parse(relativeDateString);
   const dateTimestamp = Date.parse(dateString);
 
@@ -91,7 +98,6 @@ export const formatRelativeToDate = (dateString: string, relativeDateString: str
     if(curDayOfTheWeek - readingDayOfTheWeek >  0){
       const fullDayName =  new Intl.DateTimeFormat('en-US', { weekday: 'long'}).format(theDate);
       return `${fullDayName.toLowerCase()} at ${h}:${i}`;
-
     }
   }
 
