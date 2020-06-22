@@ -1,5 +1,12 @@
 // Misc util functions
 
+type DatePiecesObject = {
+  d: string,
+  m: string,
+  y: string,
+  h: string,
+  i: string,
+};
 
 /**
  * Given date string, returns zero padded values 
@@ -7,47 +14,16 @@
  * Returns object with PHP style date pieces: h - hour, i - minute
  * @param dateString string - parsable date string
  */
-export const getDatePieces = function(dateString: string){
+export const getDatePieces = function(dateString: string): DatePiecesObject{
 
-    const date = new Date(Date.parse(dateString as string));
-
-    // zero pad our days, months, hours, and minutes if < 10.  e.g '02' instead of '2'
-    let d:any = date.getDate();
-    if(d < 10){
-      d = `0${d}`;
-    }else{
-      d = `${d}`;
-    }
-
-    let m:any = date.getMonth() + 1;
-    if(m < 10){
-      m = `0${m}`;
-    }else{
-      m = `${m}`;
-    }
-
-    let h:any = date.getHours();
-    if(h < 10){
-      h = `0${h}`;
-    }else{
-      h = `${h}`;
-    }
-
-    let i:any = date.getMinutes();
-    if(i < 10){
-      i = `0${i}`;
-    }else{
-      i = `${i}`;
-    }
-
-    const y:any = `${date.getFullYear()}`;
+    const date = new Date(Date.parse(dateString));
 
     return {
-      d,
-      m,
-      y,
-      h,
-      i
+      d: `${date.getDate()}`.padStart(2, '0'),
+      m: `${date.getMonth() + 1}`.padStart(2, '0'),
+      y: `${date.getFullYear()}`,
+      h: `${date.getHours()}`.padStart(2, '0'),
+      i: `${date.getMinutes()}`.padStart(2, '0'),
     };
 };
 
