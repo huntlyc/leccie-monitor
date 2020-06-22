@@ -1,8 +1,8 @@
 import {getDatePieces, formatRelativeToDate} from './Utils';
 
-test('formats to GB date', () => {
-    expect(getDatePieces('2020/02/01 09:08:00')).toEqual({"d": "01", "h": "09", "i": "08", "m": "02", "y": "2020"});
-    expect(getDatePieces('2020/02/28 09:08:00')).toEqual({"d": "28", "h": "09", "i": "08", "m": "02", "y": "2020"});
+test('it splits a date into the right pieces', () => {
+    expect(getDatePieces('2020/02/01 09:08:00')).toEqual({"y": "2020", "m": "02", "d": "01", "h": "09", "i": "08"});
+    expect(getDatePieces('2020/02/28 09:08:00')).toEqual({"y": "2020", "m": "02", "d": "28", "h": "09", "i": "08"});
 });
 
 test('formats relative dates', () => {
