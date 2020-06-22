@@ -15,8 +15,8 @@ const ReadingTable = function(props: any){
         if (currentIndex < props.previousReadings.length - 1) {
 
             let diff: number = 0;
-            let curReading: number = parseFloat(reading.reading as string);
-            let prevReading: number = parseFloat(props.previousReadings[++currentIndex].reading as string);
+            let curReading: number = parseFloat(reading.reading);
+            let prevReading: number = parseFloat(props.previousReadings[++currentIndex].reading);
 
             diff = curReading - prevReading;
 
@@ -34,10 +34,10 @@ const ReadingTable = function(props: any){
         }
 
         return (
-            <tr className={currentIndex === 1 && props.lastReading && parseFloat(props.lastReading.reading as string) < 10 ? 'danger-row' : ''} key={reading.date as string}>
+            <tr className={currentIndex === 1 && props.lastReading && parseFloat(props.lastReading.reading) < 10 ? 'danger-row' : ''} key={reading.date}>
                 <td>&pound;{reading.reading}</td>
                 <td className={clsName}>{txtDiff}</td>
-                <td className="date">{formatRelativeToDate(reading.date as string, new Date().toISOString())}</td>
+                <td className="date">{formatRelativeToDate(reading.date, new Date().toISOString())}</td>
             </tr>
         );
     };

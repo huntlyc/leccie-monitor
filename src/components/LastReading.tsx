@@ -11,7 +11,7 @@ type LastReadingProps = {
 
 const LastReading: FunctionComponent<LastReadingProps> = ({reading, isRunningLow}) => {
 
-    const readingDate = formatRelativeToDate(reading.date as string, new Date().toISOString());
+    const readingDate = formatRelativeToDate(reading.date, new Date().toISOString());
 
     return (
         <p data-testid="last-reading">Last reading:&nbsp;

@@ -1,6 +1,6 @@
 interface IReading {
-    date: String;
-    reading: String;
+    date: string;
+    reading: string;
 }
 
 export default IReading;

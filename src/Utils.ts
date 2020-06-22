@@ -34,11 +34,11 @@ export const getDatePieces = function(dateString: string): DatePiecesObject{
  * @param relativeDateString String - date string to format
  * @returns formattedDateStr String - dateStr formatted to 'dd/mm/yyyy hh:mm'
  */
-export const formatRelativeToDate = (dateString: String, relativeDateString: String) => {
+export const formatRelativeToDate = (dateString: string, relativeDateString: string) => {
   
 
-  const relativeDateTimeStamp = Date.parse(relativeDateString as string);
-  const dateTimestamp = Date.parse(dateString as string);
+  const relativeDateTimeStamp = Date.parse(relativeDateString);
+  const dateTimestamp = Date.parse(dateString);
 
   const relativeDate = new Date(relativeDateTimeStamp);
   const theDate = new Date(dateTimestamp);
@@ -49,7 +49,8 @@ export const formatRelativeToDate = (dateString: String, relativeDateString: Str
 
   const dateDiff = relativeDate.getTime() - theDate.getTime();
   const dateDiffInMins = Math.round((dateDiff/1000)/60);
-  const {d,m,y,h,i} = getDatePieces(dateString as string);
+  const {d,m,y,h,i} = getDatePieces(dateString);
+  
   //happened less than a min ago
   if(dateDiffInMins < 1){
     return 'just now';

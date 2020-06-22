@@ -64,7 +64,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
 
 
     const lastReading = readings.getMostRecent();
-    const isRunningLow = lastReading && parseFloat(lastReading.reading as string) < 10;
+    const isRunningLow = lastReading && parseFloat(lastReading.reading) < 10;
 
 
     return (

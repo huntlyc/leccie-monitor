@@ -3,8 +3,8 @@ import IReading from './IReading';
 
 export interface  DBReading{
     id?: number,
-    date: String;
-    reading: String;
+    date: string;
+    reading: string;
 }
 
 export interface IReadingStore {
