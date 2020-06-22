@@ -7,7 +7,7 @@
  * @property {string} m - month
  * @property {string} y - year
  * @property {string} h - hours (24)
- * @property {string} m - minutes
+ * @property {string} i - minutes
  */
 type DatePiecesObject = {
   d: string;
