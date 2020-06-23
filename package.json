@@ -38,6 +38,7 @@
     "@testing-library/jest-dom": "^5.9.0",
     "@testing-library/react": "^10.2.1",
     "fake-indexeddb": "^3.0.1",
+    "firebase": "^7.15.4",
     "jest-environment-jsdom-sixteen": "^1.0.3"
   }
 }

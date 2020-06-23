@@ -201,7 +201,7 @@ td.positive{
 
 
 /** settings popup, slides in from bottom when main h1 clicked **/
-#dev{
+.popup{
   position: fixed;
   bottom: 0;
   left: 0;
@@ -213,15 +213,15 @@ td.positive{
   transition: transform 0.2s ease-in;
 }
 
-#dev.active{
+.popup.active{
   transform: translateY(0);
 }
 
-#dev h2{
+.popup h2{
   margin-bottom: 3rem;
 }
 
-#dev ul{
+.popup ul{
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -230,12 +230,12 @@ td.positive{
   justify-content: center;
 }
 
-#dev ul li{
+.popup ul li{
   padding: 0 1rem;
 }
 
 /* ghost style buttons */
-#dev a{
+.popup a{
   text-decoration: none;
   border: 1px solid #09d3ac;
   padding: 0.5rem 0.7rem;
@@ -244,8 +244,8 @@ td.positive{
   transition: background-color 0.2s linear, color 0.2s linear;
 }
 
-#dev a:active,
-#dev a:hover{
+.popup a:active,
+.popup a:hover{
   text-decoration: none;
   background-color: #09d3ac;
   color: #2e3442;
