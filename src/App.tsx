@@ -44,7 +44,9 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
 
         //Token should be refreshed for local users, tap into it and set id
         firebase.auth().onIdTokenChanged((userCred) => {
-            setFirebaseUserID(userCred?.uid);
+            if(isReadingStore){
+                setFirebaseUserID(userCred?.uid);
+            }
         });
 
 
@@ -95,9 +97,9 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
         <div className="App">
             {isRunningLow && <AlertBanner/>}
             
-            <div className={showLogin ? 'popup active' : 'popup'}>
+            <div data-testid="menu" className={showLogin ? 'popup active' : 'popup'}>
                 {!firebaseUserID &&
-                    <form action="post" onSubmit={authFirebase}>
+                    <form data-testid="login" action="post" onSubmit={authFirebase}>
                         
                             <label htmlFor="email">Email</label><br/>
                             <input type="email" id="email" name="email"/><br/>
@@ -117,7 +119,8 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
 
             </div>
             <header className="App-header">
-                <h1 onClick={toggleLogin}>Leccie Monitor</h1>
+                <button name="menu" onClick={toggleLogin}>{showLogin ? 'Close' : 'Menu'}</button>
+                <h1 >Leccie Monitor</h1>
                 <p>Don&rsquo;t be left in the dark&hellip;</p>
                 {lastReading && <LastReading reading={lastReading} isRunningLow={isRunningLow} />}
                 <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
