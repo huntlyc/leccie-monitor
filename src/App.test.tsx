@@ -122,8 +122,6 @@ describe('app login', () => {
         expect(screen.getByTestId('menu')).toBeInTheDocument();
         expect(screen.getByTestId('login')).toBeInTheDocument();
     });
-
-
 });
 
 xdescribe('On loading with previous saved values [from seeded DB]', () => {

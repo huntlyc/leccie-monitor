@@ -9,6 +9,7 @@ import IReading from './components/IReading';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import LoginForm from './components/LoginForm';
 
 
 
@@ -23,19 +24,13 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
     const [firebaseUserID, setFirebaseUserID] = useState<string | null>();
 
 
-    const authFirebase = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const email = (document.querySelector('input[type=email]') as HTMLInputElement).value;
-        const pass = (document.querySelector('input[type=password]') as HTMLInputElement).value;
-
-
+    const authFirebase = async (email: string, pass: string) => {
         await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
         firebase.auth().signInWithEmailAndPassword(email, pass).then((userCred) => {
             setFirebaseUserID(userCred?.user?.uid);
         }).catch((err) => {
             console.log(err);
         });
-        
     }
     
     // Ensure state and db are sync'd on first run
@@ -99,16 +94,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
             
             <div data-testid="menu" className={showLogin ? 'popup active' : 'popup'}>
                 {!firebaseUserID &&
-                    <form data-testid="login" action="post" onSubmit={authFirebase}>
-                        
-                            <label htmlFor="email">Email</label><br/>
-                            <input type="email" id="email" name="email"/><br/>
-                            <br/>
-                            <label htmlFor="password">Password</label><br/>
-                            <input type="password" id="password" name="password"/><br/>
-                            <br/>
-                            <button type="submit">Login</button>
-                    </form>
+                    <LoginForm onValidSubmit={authFirebase}/>
                 }
                 {firebaseUserID && 
                     <p>
