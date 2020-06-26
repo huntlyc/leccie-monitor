@@ -1,10 +1,8 @@
 import React from 'react';
 import LoginForm from './LoginForm';
 import '@testing-library/jest-dom/extend-expect';
-import { render, screen, fireEvent, RenderResult, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-
-
+import { render, screen, fireEvent, RenderResult, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 test('it renders without crashing', () => {
     const mockLoginFN = jest.fn(() => {});
