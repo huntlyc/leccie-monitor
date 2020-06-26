@@ -8,9 +8,13 @@ import '@testing-library/jest-dom/extend-expect';
 import { IReadingStore } from './components/ReadingStore';
 
 import firebase from 'firebase/app';
+import FirebaseAdmin from './FirebaseAdmin';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { admin } from 'firebase-admin/lib/auth';
+import userEvent from '@testing-library/user-event';
 
+const fbTimeoutLimit = 10000;
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -76,7 +80,6 @@ test('it renders without crashing', () => {
 
 
 describe('On first run', () => {
-
     test('it should not have a previous readings table', () => {
         render(<App dataStore={db} />);
         expect(screen.queryByRole('table')).not.toBeInTheDocument();
@@ -103,6 +106,7 @@ describe('On first run', () => {
     });
 });
 
+
 describe('menu operation', () => {
     test('it should toggle the menu when clicking on the menu button', async () =>{
         render(<App dataStore={db} />);
@@ -116,13 +120,44 @@ describe('menu operation', () => {
     });
 });
 
+
 describe('app login', () => {
+    const userCredentials = {
+        email: 'bob@bobsworld.bob',
+        password: 'supersecurepasswordLOL'
+    };
+    let fbUserRecord: admin.auth.UserRecord;
+
+    beforeAll(async() => {
+        fbUserRecord = await FirebaseAdmin.createUser(userCredentials.email, userCredentials.password);
+    }, fbTimeoutLimit);
+
     test('it should have the login form on first run with no previous successful login', () => {
         render(<App dataStore={db} />);
         expect(screen.getByTestId('menu')).toBeInTheDocument();
         expect(screen.getByTestId('login')).toBeInTheDocument();
     });
+
+    test('it should log in a valid user', async() => {
+        render(<App dataStore={db} />);
+
+        userEvent.click(screen.getByRole('button', {name: 'Menu'}));
+        await waitFor(() => expect(screen.getByRole('button', {name: 'Close'})).toBeInTheDocument());
+
+        userEvent.type(screen.getByLabelText('Email'), userCredentials.email);
+        userEvent.type(screen.getByLabelText('Password'), userCredentials.password);
+        userEvent.click(screen.getByRole('button', {
+            name: 'Login'
+        }));
+
+        await waitFor(() => expect(screen.getByTestId('fb-user-id')).toBeInTheDocument());
+    }, fbTimeoutLimit);
+
+    afterAll(async() => {
+        return FirebaseAdmin.deleteUser(fbUserRecord.uid);
+    }, fbTimeoutLimit)
 });
+
 
 xdescribe('On loading with previous saved values [from seeded DB]', () => {
     beforeEach(() => renderAppWithSeededData());

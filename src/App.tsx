@@ -11,6 +11,9 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import LoginForm from './components/LoginForm';
 
+const envPersistenceStrategy = process.env.NODE_ENV === 'test' 
+  ? firebase.auth.Auth.Persistence.NONE 
+  : firebase.auth.Auth.Persistence.LOCAL;
 
 
 type AppProps = {
@@ -25,10 +28,13 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
 
 
     const authFirebase = async (email: string, pass: string) => {
-        await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-        firebase.auth().signInWithEmailAndPassword(email, pass).then((userCred) => {
-            setFirebaseUserID(userCred?.user?.uid);
-        }).catch((err) => {
+        firebase.auth().setPersistence(envPersistenceStrategy).then(() => {
+            firebase.auth().signInWithEmailAndPassword(email, pass).then((userCred) => {
+                setFirebaseUserID(userCred?.user?.uid);
+            }).catch((err) => {
+                console.log(err);
+            });
+        }).catch((err) => { // Persistence not supported on browser
             console.log(err);
         });
     }
@@ -37,12 +43,8 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
     useEffect(() => {
         let isReadingStore = true;
 
-        //Token should be refreshed for local users, tap into it and set id
-        firebase.auth().onIdTokenChanged((userCred) => {
-            if(isReadingStore){
-                setFirebaseUserID(userCred?.uid);
-            }
-        });
+        if(isReadingStore){
+        }
 
 
         
@@ -97,7 +99,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
                     <LoginForm onValidSubmit={authFirebase}/>
                 }
                 {firebaseUserID && 
-                    <p>
+                    <p data-testid="fb-user-id">
                         <label htmlFor="fbuid">FB UID</label>
                         <input id="fbuid" type="text" readOnly value={firebaseUserID}/>
                     </p>
