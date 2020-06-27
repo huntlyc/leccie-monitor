@@ -26,5 +26,13 @@ debug.log
 .vscode/*
 .vscode/launch.json
 
-
+# firebase 
+.firebaserc
+debug.log
+firebase.json
+firestore.rules
+firebase-debug.log
+firestore-debug.log
+firestore.indexes.json
+ui-debug.log
 src/firebaseAdminConfig.json

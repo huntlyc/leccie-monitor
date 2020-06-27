@@ -11,19 +11,11 @@ import firebase from 'firebase/app';
 import FirebaseAdmin from './FirebaseAdmin';
 import 'firebase/auth';
 import 'firebase/firestore';
+import firebaseConfig from './firebaseConfig';
 import { admin } from 'firebase-admin/lib/auth';
 import userEvent from '@testing-library/user-event';
 
-const fbTimeoutLimit = 10000;
-const firebaseConfig = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    applicationId: process.env.REACT_APP_FB_APP_ID,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    databaseURL: process.env.REACT_APP_DATABASE_URL,
-    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-};
+const firebaseTestTimelimit = 10000;
 
 firebase.initializeApp(firebaseConfig);
 
@@ -130,7 +122,7 @@ describe('app login', () => {
 
     beforeAll(async() => {
         fbUserRecord = await FirebaseAdmin.createUser(userCredentials.email, userCredentials.password);
-    }, fbTimeoutLimit);
+    }, firebaseTestTimelimit);
 
     test('it should have the login form on first run with no previous successful login', () => {
         render(<App dataStore={db} />);
@@ -151,11 +143,11 @@ describe('app login', () => {
         }));
 
         await waitFor(() => expect(screen.getByTestId('fb-user-id')).toBeInTheDocument());
-    }, fbTimeoutLimit);
+    }, firebaseTestTimelimit);
 
     afterAll(async() => {
         return FirebaseAdmin.deleteUser(fbUserRecord.uid);
-    }, fbTimeoutLimit)
+    }, firebaseTestTimelimit)
 });
 
 

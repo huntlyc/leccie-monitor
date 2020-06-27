@@ -9,6 +9,7 @@ test('it renders without crashing', () => {
     render(<LoginForm onValidSubmit={mockLoginFN}/>);
 });
 
+
 describe('Login form error handling', () => {
     test('it should warn for empty email and password', () => {
         const mockLoginFN = jest.fn(() => {});
@@ -48,7 +49,7 @@ describe('Login form error handling', () => {
     });
 
 
-    test('it should check for a valid email', () => {
+    test('it should warn for an invalid email', () => {
         const mockLoginFN = jest.fn(() => {});
         render(<LoginForm onValidSubmit={mockLoginFN}/>);
 
