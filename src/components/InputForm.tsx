@@ -23,6 +23,7 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) =
                 updateErrorStatusTo(false);
             };
 
+
             if (!isNaN(parseFloat(readingInput.value))) {
                 const readingValue = parseFloat(readingInput.value).toFixed(2);
                 onSuccess(readingValue);
@@ -38,7 +39,7 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) =
 
     return (
         <form onSubmit={onReadingSubmission}>
-            <div className="inputrow">
+            <div className="input-row">
                 <label htmlFor="reading" className="sr-only">Latest Reading</label>
                 <input className={invalidInput ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Reading (e.g. 34.22)" />
                 <button><span className="sr-only">Submit Reading</span>+</button>

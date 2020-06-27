@@ -23,6 +23,10 @@ class TestDatastore implements UserDatastore{
             resolve(this.readings.reverse());
         });
     }
+
+    changeUser(){
+        throw new Error('not available for test store');
+    }
 }
 
 

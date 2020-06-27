@@ -1338,16 +1338,6 @@
     "@firebase/util" "0.2.50"
     tslib "^1.11.1"
 
-"@firebase/testing@^0.20.5":
-  version "0.20.5"
-  resolved "https://registry.yarnpkg.com/@firebase/testing/-/testing-0.20.5.tgz#dfb4f63f47f87a91b194ecea17f5f0628f3b0142"
-  integrity sha512-S5ezAcekaWHEUYqjvn9csAxWveCg08w/W9CQBd0RSdgzxMptI2fBIhyxOJjVTclk+6zdbwajcdZpA0wBSbH66w==
-  dependencies:
-    "@firebase/logger" "0.2.5"
-    "@firebase/util" "0.2.50"
-    firebase "7.15.5"
-    request "2.88.2"
-
 "@firebase/util@0.2.50":
   version "0.2.50"
   resolved "https://registry.yarnpkg.com/@firebase/util/-/util-0.2.50.tgz#77666b845dcb49bc217650aa296a7a8986c06b44"
@@ -5263,7 +5253,7 @@ firebase-admin@^8.12.1:
     "@google-cloud/firestore" "^3.0.0"
     "@google-cloud/storage" "^4.1.2"
 
-firebase@7.15.5, firebase@^7.15.5:
+firebase@^7.15.5:
   version "7.15.5"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.15.5.tgz#fcc6691da86c3949c158d21862329501800e9913"
   integrity sha512-yeXo3KDp/ZWO0/Uyen99cUvGM76femebmyNOBTHcGSDkBXvIGth6235KhclxLROIKCC5b3YNwmKX11tbaC6RJg==
@@ -10127,7 +10117,7 @@ request-promise-native@^1.0.5, request-promise-native@^1.0.8:
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
-request@2.88.2, request@^2.87.0, request@^2.88.0, request@^2.88.2:
+request@^2.87.0, request@^2.88.0, request@^2.88.2:
   version "2.88.2"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.2.tgz#d73c918731cb5a87da047e207234146f664d12b3"
   integrity sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==

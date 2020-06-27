@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import FirebaseAdmin from './FirebaseAdmin';
 import { UserDatastore } from './components/Datastore';
 
-const firebaseTestTimelimit = 10000;
+const firebaseTestTimeLimit = 10000;
 
 let seededAppDOM: RenderResult;
 const db:UserDatastore = new TestReadingStore();
@@ -42,8 +42,8 @@ const DB = {
 
 
 /**
- * Seeds a datastore before rendering the app.
- * Waitins until the app is initialised by looking for 'last-reading'
+ * Seeds a dataStore before rendering the app.
+ * Waiting until the app is initialized by looking for 'last-reading'
  */
 const renderAppWithSeededData = async() => {
     await DB.seed();
@@ -196,7 +196,7 @@ describe('On submitting "clear" [From seeded DB]',  () => {
 xdescribe('app login', () => {
     const userCredentials = {
         email: 'bob@bobsworld.bob',
-        password: 'supersecurepasswordLOL'
+        password: 'SuperSecurePasswordLOL'
     };
     let fbUserRecord: admin.auth.UserRecord;
 
@@ -223,7 +223,7 @@ xdescribe('app login', () => {
         }));
 
         await waitFor(() => expect(screen.getByTestId('fb-user-id')).toBeInTheDocument());
-    }, firebaseTestTimelimit);
+    }, firebaseTestTimeLimit);
 
     afterAll(() => FirebaseAdmin.deleteUser(fbUserRecord.uid));
 });

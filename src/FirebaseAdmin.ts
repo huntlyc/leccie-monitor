@@ -12,6 +12,7 @@ class FireBaseAdmin{
         });
     }
 
+
     async createUser(email: string, password: string){
         try{
             const oldUser = await this.admin.auth().getUserByEmail(email);
@@ -27,6 +28,7 @@ class FireBaseAdmin{
             password: password
         });
     }
+
 
     deleteUser(uid: string){
         return this.admin.auth().deleteUser(uid)

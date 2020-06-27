@@ -11,7 +11,7 @@ const ReadingTable = function(props: any){
         let clsName: string = '';
         let txtDiff: string = ' \u2014 ';
 
-        //dont run on the first result as there's no difference!!
+        //don't run on the first result as there's no difference!!
         if (currentIndex < props.previousReadings.length - 1) {
 
             let diff: number = 0;

@@ -3,4 +3,5 @@ interface IReading {
     reading: string;
 }
 
+
 export default IReading;

@@ -5,10 +5,10 @@ import App from './App';
 import 'firebase/firestore';
 
 import * as serviceWorker from './serviceWorker';
-import FirebaseDataStore from './components/Datastore';
+import FirebaseDataStore, { UserDatastore } from './components/Datastore';
 
 
-const db = new FirebaseDataStore();
+const db: UserDatastore = new FirebaseDataStore();
 
 ReactDOM.render(
     <App dataStore={db} />,

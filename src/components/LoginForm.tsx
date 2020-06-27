@@ -17,18 +17,17 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({onValidSubmit}) => {
 
     
     const onSubmit = (e: React.FormEvent) =>{
-        e.preventDefault();
-
+        let formIsValid = true;
+        const email = (document.querySelector('input[name=email]') as HTMLInputElement).value;
+        const password = (document.querySelector('input[name=password]') as HTMLInputElement).value;
         const validateEmail = (email: string) => {
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
         };
 
 
-        const email = (document.querySelector('input[name=email]') as HTMLInputElement).value;
-        const password = (document.querySelector('input[name=password]') as HTMLInputElement).value;
+        e.preventDefault();
 
-        let formIsValid = true;
 
         if(email === "" || password === ""){
             addToErrors('Please enter your login details');
@@ -42,6 +41,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({onValidSubmit}) => {
             onValidSubmit(email, password);
         }
     };
+
 
     return (
         <>
@@ -62,5 +62,6 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({onValidSubmit}) => {
         </>
     );
 };
+
 
 export default LoginForm;

@@ -5,6 +5,7 @@ import firebaseConfig from "../firebaseConfig";
 
 export interface UserDatastore{
     addReading: (reading: IReading) => void,
+    changeUser: (newUid: string) => void,
     getAllReadings: () => Promise<Array<IReading>>,
     clearAllReadings: () => Promise<void> | false
 };
@@ -12,29 +13,27 @@ export interface UserDatastore{
 
 class FirebaseDataStore implements UserDatastore{
     uid: string;
-    readings?: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>;
+    readingRef?: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>;
 
 
     constructor(uid: string = ''){
-
         this.uid = uid;
 
         if(uid !== ''){
-            this.initFirebase(uid);
+            this.configureFirebase();
         }
     }
 
 
-    private initFirebase(uid: string) {
-        if (firebase.apps.length === 0) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        this.readings = firebase.firestore().collection('readingLists').doc(uid).collection('readings');
+    changeUser(uid: string) {
+        this.uid = uid;
+        this.configureFirebase();
     }
+
 
     async getAllReadings(){
-        let fbReadings = await this.readings?.get();
         const readings: Array<IReading> = [];
+        let fbReadings = await this.readingRef?.get();
 
         if(fbReadings){
             fbReadings.forEach((snapshot) => {
@@ -46,23 +45,37 @@ class FirebaseDataStore implements UserDatastore{
     }
 
 
-    async addReading(reading: IReading){
-        let doc = await this.readings?.add({
-            uid: this.uid,
-            reading: reading.reading,
-            date: reading.date
-        });
 
-        return doc;
+    async addReading(reading: IReading){
+        let readingRef = firebase.firestore().collection('readingLists').doc(this.uid).collection('readings');
+
+        if(readingRef){
+            return readingRef.add({
+                uid: this.uid,
+                reading: reading.reading,
+                date: reading.date
+            });
+        }
+
+
+        return false;
     }
 
 
     clearAllReadings(){
-        if(this.readings?.parent){
-            return this.readings.parent?.delete();
+        if(this.readingRef?.parent){
+            return this.readingRef.parent?.delete();
         }
 
         return false;
+    }
+
+
+    private configureFirebase(){
+        if (firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        this.readingRef = firebase.firestore().collection('readingLists').doc(this.uid).collection('readings');
     }
 }
 

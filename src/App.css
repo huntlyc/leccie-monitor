@@ -107,7 +107,7 @@ form{
   
 }
 
-form .inputrow{
+form .input-row{
   display: flex;
   flex-direction: row;
   align-items: center;
