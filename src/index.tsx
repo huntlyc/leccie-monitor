@@ -2,16 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import { LocalStorageReadingStore, IReadingStore } from './components/ReadingStore';
-import firebaseConfig from './firebaseConfig'
-import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 import * as serviceWorker from './serviceWorker';
+import FirebaseDataStore from './components/Datastore';
 
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore().collection('readings')
+const db = new FirebaseDataStore();
 
 ReactDOM.render(
     <App dataStore={db} />,

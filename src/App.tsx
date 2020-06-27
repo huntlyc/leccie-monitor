@@ -1,6 +1,5 @@
 import React, { useState, useEffect, FunctionComponent } from 'react';
 import './App.css';
-import { IReadingStore } from './components/ReadingStore';
 import AlertBanner from './components/AlertBanner';
 import ReadingForm from './components/InputForm';
 import ReadingTable from './components/ReadingsTable';
@@ -8,8 +7,9 @@ import LastReading from './components/LastReading';
 import IReading from './components/IReading';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import 'firebase/firestore';
 import LoginForm from './components/LoginForm';
+import FirebaseDataStore, { UserDatastore } from './components/Datastore';
+import firebaseConfig from './firebaseConfig';
 
 const envPersistenceStrategy = process.env.NODE_ENV === 'test' 
   ? firebase.auth.Auth.Persistence.NONE 
@@ -17,20 +17,28 @@ const envPersistenceStrategy = process.env.NODE_ENV === 'test'
 
 
 type AppProps = {
-    dataStore: firebase.firestore.CollectionReference
+    dataStore: UserDatastore
 };
+
 
 
 const App: FunctionComponent<AppProps> = ({dataStore}) => {
     const [previousReadings, updatePreviousReadings] = useState<IReading[]>([]);
     const [showLogin, setLoginStatusTo] = useState(false);
     const [firebaseUserID, setFirebaseUserID] = useState<string | null>();
+ 
 
 
     const authFirebase = async (email: string, pass: string) => {
+        if (firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
         firebase.auth().setPersistence(envPersistenceStrategy).then(() => {
             firebase.auth().signInWithEmailAndPassword(email, pass).then((userCred) => {
-                setFirebaseUserID(userCred?.user?.uid);
+                if(userCred && userCred.user && userCred.user.uid){
+                    setFirebaseUserID(userCred?.user?.uid);
+                    dataStore = new FirebaseDataStore(userCred.user.uid);
+                }
             }).catch((err) => {
                 console.log(err);
             });
@@ -43,12 +51,14 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
     useEffect(() => {
         let isReadingStore = true;
 
-        if(isReadingStore){
+        if(dataStore){
+            dataStore.getAllReadings().then((res) => {
+                if(isReadingStore && res.length > 0){
+                    updatePreviousReadings(res)
+                }
+            })
         }
 
-
-        
-      
         return () => { isReadingStore = false } ;
 
         // eslint-disable-next-line
@@ -62,7 +72,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
                 reading: reading
             }
             
-            // dataStore.addReading(readingObj);
+            dataStore.addReading(readingObj);
     
             let readings = previousReadings.slice(0);
             readings.unshift(readingObj);
@@ -70,7 +80,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
         },   
         clearAll: function(){
             updatePreviousReadings([]);
-            // dataStore.clearAllReadings();
+            dataStore.clearAllReadings();
         },
         getMostRecent: function(){
             if(previousReadings && previousReadings[0]){

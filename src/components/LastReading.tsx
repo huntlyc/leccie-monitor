@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from 'react';
-import { DBReading } from './ReadingStore';
 import { formatRelativeToDate } from '../Utils';
+import IReading from './IReading';
 
 
 type LastReadingProps = {
-    reading: DBReading,
+    reading: IReading,
     isRunningLow: boolean
 };
 

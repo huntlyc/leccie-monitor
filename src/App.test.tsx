@@ -2,32 +2,22 @@
 
 import React from 'react';
 import App from './App';
-import { TestLocalStorageReadingStorage } from './components/TestReadingStore';
 import { render, screen, fireEvent, RenderResult, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect';
-import { IReadingStore } from './components/ReadingStore';
-
-import firebase from 'firebase/app';
-import FirebaseAdmin from './FirebaseAdmin';
-import 'firebase/auth';
-import 'firebase/firestore';
-import firebaseConfig from './firebaseConfig';
+import TestReadingStore from './components/TestDataStore';
 import { admin } from 'firebase-admin/lib/auth';
 import userEvent from '@testing-library/user-event';
+import FirebaseAdmin from './FirebaseAdmin';
+import { UserDatastore } from './components/Datastore';
 
 const firebaseTestTimelimit = 10000;
 
-firebase.initializeApp(firebaseConfig);
-
 let seededAppDOM: RenderResult;
-
-const db = firebase.firestore().collection('testreadings')
+const db:UserDatastore = new TestReadingStore();
 
 // Helper DB functions
 const DB = {
     seed: async() => { 
-
-        throw('Not Implemented Yet');
 
         let clearDB = db.clearAllReadings();
         let addOldestReading =  db.addReading({
@@ -47,7 +37,7 @@ const DB = {
 
         await Promise.all([clearDB,addOldestReading,addNewerReading,addLatestReading]);
     },
-    clear: () => {throw('Not Implemented Yet')}
+    clear: () => db.clearAllReadings()
 };
 
 
@@ -60,7 +50,6 @@ const renderAppWithSeededData = async() => {
     seededAppDOM = render(<App dataStore={db} />);
     expect(await seededAppDOM.findByTestId('last-reading')).toBeInTheDocument();
 };
-
 
 /**
  * Main Tests
@@ -113,45 +102,7 @@ describe('menu operation', () => {
 });
 
 
-describe('app login', () => {
-    const userCredentials = {
-        email: 'bob@bobsworld.bob',
-        password: 'supersecurepasswordLOL'
-    };
-    let fbUserRecord: admin.auth.UserRecord;
-
-    beforeAll(async() => {
-        fbUserRecord = await FirebaseAdmin.createUser(userCredentials.email, userCredentials.password);
-    }, firebaseTestTimelimit);
-
-    test('it should have the login form on first run with no previous successful login', () => {
-        render(<App dataStore={db} />);
-        expect(screen.getByTestId('menu')).toBeInTheDocument();
-        expect(screen.getByTestId('login')).toBeInTheDocument();
-    });
-
-    test('it should log in a valid user', async() => {
-        render(<App dataStore={db} />);
-
-        userEvent.click(screen.getByRole('button', {name: 'Menu'}));
-        await waitFor(() => expect(screen.getByRole('button', {name: 'Close'})).toBeInTheDocument());
-
-        userEvent.type(screen.getByLabelText('Email'), userCredentials.email);
-        userEvent.type(screen.getByLabelText('Password'), userCredentials.password);
-        userEvent.click(screen.getByRole('button', {
-            name: 'Login'
-        }));
-
-        await waitFor(() => expect(screen.getByTestId('fb-user-id')).toBeInTheDocument());
-    }, firebaseTestTimelimit);
-
-    afterAll(async() => {
-        return FirebaseAdmin.deleteUser(fbUserRecord.uid);
-    }, firebaseTestTimelimit)
-});
-
-
-xdescribe('On loading with previous saved values [from seeded DB]', () => {
+describe('On loading with previous saved values [from seeded DB]', () => {
     beforeEach(() => renderAppWithSeededData());
 
     test('it should show last reading of: £1.04 - 27/10/2019 at 11:20', async () => {
@@ -174,11 +125,11 @@ xdescribe('On loading with previous saved values [from seeded DB]', () => {
 });
 
 
-xdescribe('On submitting a reading on first run', () => {
+describe('On submitting a reading on first run', () => {
     const inputReadingValue = "5.04";
     const submitValidReading = () => {
-        fireEvent.change(screen.getByRole('textbox'), { target: { value: inputReadingValue } });
-        fireEvent.click(screen.getByRole('button'));
+        fireEvent.change(screen.getByRole('textbox', {name: 'Latest Reading'}), { target: { value: inputReadingValue } });
+        fireEvent.click(screen.getByRole('button', {name: 'Submit Reading +'}));
     };
     let renderedDOM: RenderResult;
 
@@ -189,7 +140,7 @@ xdescribe('On submitting a reading on first run', () => {
     });
     
     test('it should clear the input field', () => {
-        expect(screen.getByRole('textbox')).toHaveValue('');
+        expect(screen.getByRole('textbox', {name: 'Latest Reading'})).toHaveValue('');
     });
 
     test('it should show the reading in the latest reading field ', async () => {
@@ -211,10 +162,10 @@ xdescribe('On submitting a reading on first run', () => {
 });
 
 
-xdescribe('On submitting "clear" [From seeded DB]',  () => {
+describe('On submitting "clear" [From seeded DB]',  () => {
     const submitClearCommand = () => {
-        fireEvent.change(screen.getByRole('textbox'), { target: { value: 'clear' } });
-        fireEvent.click(screen.getByRole('button'));
+        fireEvent.change(screen.getByRole('textbox', {name: 'Latest Reading'}), { target: { value: 'clear' } });
+        fireEvent.click(screen.getByRole('button', {name: 'Submit Reading +'}));
     };
 
     beforeEach(async() => {
@@ -223,7 +174,7 @@ xdescribe('On submitting "clear" [From seeded DB]',  () => {
     });
 
     test('it should clear the input field', () => {
-        expect(screen.getByRole('textbox')).toHaveValue('');
+        expect(screen.getByRole('textbox', {name: 'Latest Reading'})).toHaveValue('');
     });
 
     test('it should not have a previous readings table', () => {
@@ -239,4 +190,40 @@ xdescribe('On submitting "clear" [From seeded DB]',  () => {
     });
 
     afterEach(() => DB.clear());
+});
+
+// This is slow, move out to firebase test suite that can be run every once in a while
+xdescribe('app login', () => {
+    const userCredentials = {
+        email: 'bob@bobsworld.bob',
+        password: 'supersecurepasswordLOL'
+    };
+    let fbUserRecord: admin.auth.UserRecord;
+
+    beforeAll(async() => {
+        fbUserRecord = await FirebaseAdmin.createUser(userCredentials.email, userCredentials.password);
+    })
+
+    test('it should have the login form on first run with no previous successful login', () => {
+        render(<App dataStore={db} />);
+        expect(screen.getByTestId('menu')).toBeInTheDocument();
+        expect(screen.getByTestId('login')).toBeInTheDocument();
+    });
+
+    test('it should log in a valid user', async() => {
+        render(<App dataStore={db} />);
+
+        userEvent.click(screen.getByRole('button', {name: 'Menu'}));
+        await waitFor(() => expect(screen.getByRole('button', {name: 'Close'})).toBeInTheDocument());
+
+        userEvent.type(screen.getByLabelText('Email'), userCredentials.email);
+        userEvent.type(screen.getByLabelText('Password'), userCredentials.password);
+        userEvent.click(screen.getByRole('button', {
+            name: 'Login'
+        }));
+
+        await waitFor(() => expect(screen.getByTestId('fb-user-id')).toBeInTheDocument());
+    }, firebaseTestTimelimit);
+
+    afterAll(() => FirebaseAdmin.deleteUser(fbUserRecord.uid));
 });
