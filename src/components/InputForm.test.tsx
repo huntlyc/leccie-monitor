@@ -22,8 +22,11 @@ test('it calls success prop fn after valid value', () =>{
     fireEvent.change(screen.getByRole('textbox'), { target: { value: inputReadingValue } });
     fireEvent.click(screen.getByRole('button'));
 
+    expect(mockClearFN).toBeCalledTimes(0);
+
     expect(mockSuccessFN).toBeCalledTimes(1);
     expect(mockSuccessFN).toBeCalledWith(inputReadingValue);
+    expect(screen.queryByText('Please enter number or "Clear"')).not.toBeInTheDocument();
 });
 
 
