@@ -7,13 +7,10 @@ import LastReading from './components/LastReading';
 import IReading from './components/IReading';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import LoginForm from './components/LoginForm';
 import { UserDatastore } from './components/Datastore';
 import firebaseConfig from './firebaseConfig';
+import UserAuthentication from './components/UserAuthentication';
 
-const envPersistenceStrategy = process.env.NODE_ENV === 'test' 
-  ? firebase.auth.Auth.Persistence.NONE 
-  : firebase.auth.Auth.Persistence.LOCAL;
 
 
 type AppProps = {
@@ -22,11 +19,27 @@ type AppProps = {
 
 
 const App: FunctionComponent<AppProps> = ({dataStore}) => {
-    const [previousReadings, updatePreviousReadings] = useState<IReading[]>([]);
-    const [showLogin, setLoginStatusTo] = useState(false);
+    const [isCheckingUser, updateIsCheckingUser] = useState(true);
+
     const [firebaseUserID, setFirebaseUserID] = useState<string | null>();
+    const logoutUser = () => {
+        firebase.auth().signOut().then(() => {
+            setFirebaseUserID(null);
+            updatePreviousReadings([]);
+            shouldShowMenu(false);
+        });
+    };
 
 
+    const [showMenu, shouldShowMenu] = useState(false);
+    const toggleMenu = () => {
+        shouldShowMenu(!showMenu);
+    };
+
+
+    const [previousReadings, updatePreviousReadings] = useState<IReading[]>([]);
+
+    // Small collection of utility functions related to readings
     const readings = {
         add: function(reading: string){
             const readingObj: IReading = {
@@ -53,37 +66,12 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
         }
     };   
 
-
-    const lastReading = readings.getMostRecent();
-    const isRunningLow = lastReading && parseFloat(lastReading.reading) < 10;
-
-
-    const toggleMenu = () => {
-        setLoginStatusTo(!showLogin);
-    };
+    const lastReadingValue = readings.getMostRecent();
+    const isRunningLow = lastReadingValue && parseFloat(lastReadingValue.reading) < 10;
 
 
-    const authFirebase = async (email: string, pass: string) => {
-        if (firebase.apps.length === 0) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        firebase.auth().setPersistence(envPersistenceStrategy).then(() => {
-            firebase.auth().signInWithEmailAndPassword(email, pass).then((userCred) => {
-                if(userCred && userCred.user && userCred.user.uid){
-                    setFirebaseUserID(userCred?.user?.uid);
-                    dataStore.changeUser(userCred.user.uid)
-                }
-            }).catch((err) => {
-                console.log(err);
-            });
-        }).catch((err) => { // Persistence not supported on browser
-            console.log(err);
-        });
-    }
-    
-    // Ensure state and db are synchronized on first run
+    //On first run...
     useEffect(() => {
-        let isReadingStore = true;
 
         if (firebase.apps.length === 0) {
             firebase.initializeApp(firebaseConfig);
@@ -91,56 +79,67 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
 
         firebase.auth().onIdTokenChanged((user) => {
             if(user && user?.uid && user.uid !== firebaseUserID){
-                if(isReadingStore){
-                    setFirebaseUserID(user.uid);
-                    dataStore.changeUser(user.uid);
-                    dataStore.getAllReadings().then((res) => {
-                        if(isReadingStore && res.length > 0){
-                            updatePreviousReadings(res)
-                        }
-                    })
-                }
+                setFirebaseUserID(user.uid);
             }
+
+            updateIsCheckingUser(false);
         });
-
-        if(dataStore){
-            dataStore.getAllReadings().then((res) => {
-                if(isReadingStore && res.length > 0){
-                    updatePreviousReadings(res)
-                }
-            })
-        }
-
-        return () => { isReadingStore = false } ;
-
         // eslint-disable-next-line
     }, []);
 
 
+    //Whenever our user changes
+    useEffect(() => {
+        let isReadingStore = true;
+        if(firebaseUserID){
+            dataStore.changeUser(firebaseUserID);
+            dataStore.getAllReadings().then((res) => {
+                if(isReadingStore && res.length > 0){
+                    updatePreviousReadings(res)
+                }
+            });
+        }
+        return () => { isReadingStore = false } ;
+    }, [firebaseUserID, dataStore]);
+
+
+    const getMainContentArea = () => {
+        if(isCheckingUser) return null;
+
+        if(firebaseUserID){
+            return <ReadingTable previousReadings={previousReadings}/>
+        }else{
+            return <UserAuthentication onAuthenticated={setFirebaseUserID} />
+        }
+    };
+
+
+    const getHeaderContentArea = () => {
+        if(isCheckingUser) return <p>Loading, please wait&hellip;</p>;
+
+        if(firebaseUserID){
+            return (
+                <>
+                    <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
+                    {lastReadingValue && <LastReading reading={lastReadingValue} isRunningLow={isRunningLow} />}
+                </>
+            );
+        }
+
+        return null;
+    }
+
     return (
         <div className="App">
             {isRunningLow && <AlertBanner/>}
-            
-            <div data-testid="menu" className={showLogin ? 'popup active' : 'popup'}>
-                {!firebaseUserID &&
-                    <LoginForm onValidSubmit={authFirebase}/>
-                }
-                {firebaseUserID && 
-                    <p data-testid="fb-user-id">
-                        <label htmlFor="fb-uid">FB UID</label>
-                        <input id="fb-uid" type="text" readOnly value={firebaseUserID}/>
-                    </p>
-                }
-
-            </div>
             <header className="App-header">
-                <button name="menu" onClick={toggleMenu}>{showLogin ? 'Close' : 'Menu'}</button>
                 <h1 >Leccie Monitor</h1>
                 <p>Don&rsquo;t be left in the dark&hellip;</p>
-                {lastReading && <LastReading reading={lastReading} isRunningLow={isRunningLow} />}
-                <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
+                {getHeaderContentArea()}
             </header>
-            <ReadingTable previousReadings={previousReadings}/>
+            {getMainContentArea()}
+            {firebaseUserID && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
+            {firebaseUserID && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
         </div>
     );
 }

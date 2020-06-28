@@ -1,11 +1,12 @@
 import React, { FunctionComponent, useState } from 'react';
 
 type LoginFormProps = {
+    isRegistration: boolean,
     onValidSubmit: (username: string, password: string) => void,
 };
 
 
-const LoginForm: FunctionComponent<LoginFormProps> = ({onValidSubmit}) => {
+const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSubmit}) => {
     const [formErrors, setFormErrors] = useState<string[]>([]);
 
 
@@ -57,7 +58,10 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({onValidSubmit}) => {
                 <label htmlFor="password">Password</label><br/>
                 <input type="password" id="password" name="password"/><br/>
                 <br/>
-                <button type="submit">Login</button>
+                {isRegistration 
+                  ? <button type="submit">Sign up</button>
+                  : <button type="submit">Sign in</button>
+                }
             </form>
         </>
     );

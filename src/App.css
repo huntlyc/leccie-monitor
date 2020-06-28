@@ -122,12 +122,17 @@ input{
   font-size: 1.3rem;
   border: none;
   box-sizing: border-box;
-  border-radius: 0;
   padding: 0.4rem 1rem;
   border: 2px solid #fff;
+  border-radius: 4px;
+
+}
+
+
+.input-row input{
+  border-radius: 0;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-
 }
 
 input.error{
@@ -141,15 +146,20 @@ button{
   background: #09d3ac;
   color: #464646;
   font-size: 1.3rem;
-  border-radius: 0;
+  border-radius: 4px;
   padding: 0.4rem 1rem;
   border: 2px solid #09d3ac;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.12s ease;
 }
+
+.input-row button{
+  border-radius: 0px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
 
 button:hover{
   background-color: #0ae6bc;
@@ -252,3 +262,32 @@ td.positive{
   padding: 0.5rem 0.7rem;
 }
 /** /settings popup **/
+
+
+
+/** login/register toggle **/
+ul.login-options{
+  margin-top: 3rem;
+  display: inline-block;
+}
+ul.login-options li{
+  list-style-type: none;
+  display: inline;
+}
+ul.login-options li button{
+  background: transparent;
+  color: #006d58;
+  border: none;
+}
+ul.login-options li button.active{
+  color: #09d3ac;
+  border-bottom: 2px solid #09d3ac;
+}
+
+
+button[name="menu"]{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+}
