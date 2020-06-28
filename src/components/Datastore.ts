@@ -33,7 +33,7 @@ class FirebaseDataStore implements UserDatastore{
 
     async getAllReadings(){
         const readings: Array<IReading> = [];
-        let fbReadings = await this.readingRef?.get();
+        let fbReadings = await this.readingRef?.orderBy('date', 'desc').get();
 
         if(fbReadings){
             fbReadings.forEach((snapshot) => {

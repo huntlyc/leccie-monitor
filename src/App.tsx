@@ -96,7 +96,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
                     dataStore.changeUser(user.uid);
                     dataStore.getAllReadings().then((res) => {
                         if(isReadingStore && res.length > 0){
-                            updatePreviousReadings(res.reverse())
+                            updatePreviousReadings(res)
                         }
                     })
                 }
