@@ -72,6 +72,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
 
     //On first run...
     useEffect(() => {
+        let isStillRunning = true;
 
         if (firebase.apps.length === 0) {
             firebase.initializeApp(firebaseConfig);
@@ -79,12 +80,19 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
 
         firebase.auth().onIdTokenChanged((user) => {
             if(user && user?.uid && user.uid !== firebaseUserID){
-                setFirebaseUserID(user.uid);
+                if(isStillRunning) {
+                    console.log('setting shit');
+                    setFirebaseUserID(user.uid);
+                }
             }
 
-            updateIsCheckingUser(false);
+            if(isStillRunning){
+                    console.log('setting more shit');
+                updateIsCheckingUser(false);
+            }
         });
         // eslint-disable-next-line
+        return () => { isStillRunning = false };
     }, []);
 
 
@@ -138,8 +146,8 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
                 {getHeaderContentArea()}
             </header>
             {getMainContentArea()}
-            {firebaseUserID && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
-            {firebaseUserID && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
+            {!isCheckingUser && firebaseUserID && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
+            {!isCheckingUser && firebaseUserID && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
         </div>
     );
 }
