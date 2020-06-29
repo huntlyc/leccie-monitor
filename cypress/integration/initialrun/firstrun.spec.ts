@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 context('First Run', () => {
 
     beforeEach(() => {
