@@ -17,9 +17,14 @@ type AppProps = {
     dataStore: UserDatastore
 };
 
+enum AuthState {
+    init,
+    noUser,
+    authenticated
+};
 
 const App: FunctionComponent<AppProps> = ({dataStore}) => {
-    const [isCheckingUser, updateIsCheckingUser] = useState(true);
+    const [applicationAuthState, updateAuthState] = useState(AuthState.init);
 
     const [firebaseUserID, setFirebaseUserID] = useState<string | null>();
     const logoutUser = () => {
@@ -79,16 +84,13 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
         }
 
         firebase.auth().onIdTokenChanged((user) => {
-            if(user && user?.uid && user.uid !== firebaseUserID){
-                if(isStillRunning) {
-                    console.log('setting shit');
-                    setFirebaseUserID(user.uid);
-                }
-            }
+            if(!isStillRunning) return;
 
-            if(isStillRunning){
-                    console.log('setting more shit');
-                updateIsCheckingUser(false);
+            if(user){
+                setFirebaseUserID(user.uid);
+                updateAuthState(AuthState.authenticated)
+            }else{
+                updateAuthState(AuthState.noUser)
             }
         });
         // eslint-disable-next-line
@@ -99,11 +101,11 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
     //Whenever our user changes
     useEffect(() => {
         let isReadingStore = true;
-        if(firebaseUserID){
+        if(applicationAuthState == AuthState.authenticated && firebaseUserID){
             dataStore.changeUser(firebaseUserID);
             dataStore.getAllReadings().then((res) => {
                 if(isReadingStore && res.length > 0){
-                    updatePreviousReadings(res)
+                    updatePreviousReadings(res);
                 }
             });
         }
@@ -112,42 +114,39 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
 
 
     const getMainContentArea = () => {
-        if(isCheckingUser) return null;
-
-        if(firebaseUserID){
-            return <ReadingTable previousReadings={previousReadings}/>
-        }else{
-            return <UserAuthentication onAuthenticated={setFirebaseUserID} />
+        switch(applicationAuthState){
+            case AuthState.noUser: return <UserAuthentication onAuthenticated={setFirebaseUserID} />;
+            case AuthState.authenticated: return <ReadingTable previousReadings={previousReadings}/>;
+            default: return null; 
         }
     };
 
 
     const getHeaderContentArea = () => {
-        if(isCheckingUser) return <p>Loading, please wait&hellip;</p>;
-
-        if(firebaseUserID){
-            return (
-                <>
-                    <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
-                    {lastReadingValue && <LastReading reading={lastReadingValue} isRunningLow={isRunningLow} />}
-                </>
-            );
+        switch(applicationAuthState){
+            case AuthState.noUser: return null;
+            case AuthState.authenticated: 
+                return (
+                    <>
+                        <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
+                        {lastReadingValue && <LastReading reading={lastReadingValue} isRunningLow={isRunningLow} />}
+                    </>
+                );
+            default: return <p>Loading, please wait&hellip;</p>;
         }
-
-        return null;
     }
 
     return (
         <div className="App">
-            {isRunningLow && <AlertBanner/>}
+            {applicationAuthState === AuthState.authenticated && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
+            {applicationAuthState === AuthState.authenticated && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
             <header className="App-header">
                 <h1 >Leccie Monitor</h1>
                 <p>Don&rsquo;t be left in the dark&hellip;</p>
                 {getHeaderContentArea()}
             </header>
             {getMainContentArea()}
-            {!isCheckingUser && firebaseUserID && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
-            {!isCheckingUser && firebaseUserID && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
+            {isRunningLow && <AlertBanner/>}
         </div>
     );
 }
