@@ -1,20 +1,31 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 
 type LoginFormProps = {
     isRegistration: boolean,
     onValidSubmit: (username: string, password: string) => void,
+    authError: string
 };
 
 
-const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSubmit}) => {
+const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSubmit, authError}) => {
     const [formErrors, setFormErrors] = useState<string[]>([]);
-
 
     const addToErrors = (error: string) => {
         let currentErrors = formErrors.slice(0);
         currentErrors.push(error);
         setFormErrors(currentErrors);
     };
+
+    useEffect(() => {
+        let isRunning = true;
+
+        if(isRunning && authError){
+            addToErrors(authError);
+        }
+
+        return () => { isRunning = false };
+
+    }, [authError]);
 
     
     const onSubmit = (e: React.FormEvent) =>{

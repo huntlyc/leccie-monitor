@@ -18,6 +18,7 @@ type UserAuthenticationProps = {
 
 const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthenticated}) => {
     const [isLogin, setFormToLogin] = useState(true);
+    const [authError, setAuthEror] = useState('');
     const authFirebase = async (email: string, pass: string) => {
 
         if (firebase.apps.length === 0) {
@@ -32,7 +33,8 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
                         onAuthenticated(userCred?.user?.uid);
                     }
                 }).catch((err) => {
-                    console.log(err);
+                    console.log(err.message);
+                    setAuthEror(err.message);
                 });
             }else{
                 firebase.auth().createUserWithEmailAndPassword(email, pass).then((userCred) => {
@@ -41,6 +43,8 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
                     }
                 }).catch((err) => {
                     console.log(err);
+                    console.log(err.message);
+                    setAuthEror(err.message);
                 });
             
             }
@@ -51,12 +55,11 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
 
     return (
         <>
-
             <ul className="login-options">
                 <li><button onClick={() => setFormToLogin(true)}  className={isLogin  ? 'active' :  '' }>Login</button></li>
                 <li><button onClick={() => setFormToLogin(false)} className={!isLogin ? 'active' :  '' }>Register</button></li>
             </ul>
-            <LoginForm isRegistration={!isLogin} onValidSubmit={authFirebase}/>
+            <LoginForm isRegistration={!isLogin} onValidSubmit={authFirebase} authError={authError}/>
         </>
     );
 }
