@@ -7,15 +7,11 @@ import LastReading from './components/LastReading';
 import IReading from './components/IReading';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { UserDatastore } from './components/Datastore';
 import firebaseConfig from './firebaseConfig';
 import UserAuthentication from './components/UserAuthentication';
+import FirebaseDataStore, { UserDatastore } from './components/Datastore';
+import TestDatastore from './components/TestDataStore';
 
-
-
-type AppProps = {
-    dataStore: UserDatastore
-};
 
 enum AuthState {
     init,
@@ -23,7 +19,15 @@ enum AuthState {
     authenticated
 };
 
-const App: FunctionComponent<AppProps> = ({dataStore}) => {
+const App: FunctionComponent = () => {
+    let dataStore: UserDatastore;
+
+    if(process.env.NODE_ENV === 'test'){
+        dataStore = new TestDatastore();
+    }else{
+        dataStore = new FirebaseDataStore();
+    }
+
     const [applicationAuthState, updateAuthState] = useState(AuthState.init);
 
     const [firebaseUserID, setFirebaseUserID] = useState<string | null>();
@@ -101,7 +105,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
     //Whenever our user changes
     useEffect(() => {
         let isReadingStore = true;
-        if(applicationAuthState == AuthState.authenticated && firebaseUserID){
+        if(applicationAuthState === AuthState.authenticated && firebaseUserID){
             dataStore.changeUser(firebaseUserID);
             dataStore.getAllReadings().then((res) => {
                 if(isReadingStore && res.length > 0){
@@ -141,7 +145,7 @@ const App: FunctionComponent<AppProps> = ({dataStore}) => {
             {applicationAuthState === AuthState.authenticated && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
             {applicationAuthState === AuthState.authenticated && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
             <header className="App-header">
-                <h1 >Leccie Monitor</h1>
+                <h1>Leccie Monitor</h1>
                 <p>Don&rsquo;t be left in the dark&hellip;</p>
                 {getHeaderContentArea()}
             </header>

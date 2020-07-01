@@ -2,16 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import 'firebase/firestore';
-
 import * as serviceWorker from './serviceWorker';
-import FirebaseDataStore, { UserDatastore } from './components/Datastore';
 
 
-const db: UserDatastore = new FirebaseDataStore();
 
 ReactDOM.render(
-    <App dataStore={db} />,
+    <App />,
     document.getElementById('root')
 );
 

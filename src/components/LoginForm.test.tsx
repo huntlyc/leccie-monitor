@@ -4,16 +4,27 @@ import '@testing-library/jest-dom/extend-expect';
 import { render, screen, fireEvent, RenderResult, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+
 test('it renders without crashing', () => {
     const mockLoginFN = jest.fn(() => {});
-    render(<LoginForm onValidSubmit={mockLoginFN}/>);
+    const isRegistration = false;
+    render(<LoginForm onValidSubmit={mockLoginFN} isRegistration={isRegistration} />);
+});
+
+
+test('it renders "sign up" when registration is set', () => {
+    const mockLoginFN = jest.fn(() => {});
+    const isRegistration = true;
+    render(<LoginForm onValidSubmit={mockLoginFN} isRegistration={isRegistration} />);
+    expect(screen.getByRole('button')).toHaveTextContent('Sign up');
 });
 
 
 describe('Login form error handling', () => {
     test('it should warn for empty email and password', () => {
         const mockLoginFN = jest.fn(() => {});
-        render(<LoginForm onValidSubmit={mockLoginFN}/>);
+        const isRegistration = false;
+        render(<LoginForm onValidSubmit={mockLoginFN} isRegistration={isRegistration}/>);
 
         userEvent.click(screen.getByRole('button'));
 
@@ -25,7 +36,8 @@ describe('Login form error handling', () => {
 
     test('it should warn for empty email', () => {
         const mockLoginFN = jest.fn(() => {});
-        render(<LoginForm onValidSubmit={mockLoginFN}/>);
+        const isRegistration = false;
+        render(<LoginForm onValidSubmit={mockLoginFN} isRegistration={isRegistration}/>);
 
         userEvent.type(screen.getByLabelText('Password'), 'password!');
         userEvent.click(screen.getByRole('button'));
@@ -38,7 +50,8 @@ describe('Login form error handling', () => {
 
     test('it should warn for empty password', () => {
         const mockLoginFN = jest.fn(() => {});
-        render(<LoginForm onValidSubmit={mockLoginFN}/>);
+        const isRegistration = false;
+        render(<LoginForm onValidSubmit={mockLoginFN} isRegistration={isRegistration}/>);
 
         userEvent.type(screen.getByLabelText('Email'), 'bob@bobsworld.com');
         userEvent.click(screen.getByRole('button'));
@@ -51,7 +64,8 @@ describe('Login form error handling', () => {
 
     test('it should warn for an invalid email', () => {
         const mockLoginFN = jest.fn(() => {});
-        render(<LoginForm onValidSubmit={mockLoginFN}/>);
+        const isRegistration = false;
+        render(<LoginForm onValidSubmit={mockLoginFN} isRegistration={isRegistration}/>);
 
         userEvent.type(screen.getByLabelText('Email'), 'bob');
         userEvent.type(screen.getByLabelText('Password'), 'bob');
@@ -65,7 +79,8 @@ describe('Login form error handling', () => {
 
     test('it should call login fn when filled with valid email and password', () => {
         const mockLoginFN = jest.fn(() => {});
-        render(<LoginForm onValidSubmit={mockLoginFN}/>);
+        const isRegistration = false;
+        render(<LoginForm onValidSubmit={mockLoginFN} isRegistration={isRegistration}/>);
 
         userEvent.type(screen.getByLabelText('Email'), 'bob@bobsworld.com');
         userEvent.type(screen.getByLabelText('Password'), 'bob');
