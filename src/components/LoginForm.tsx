@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 
 type LoginFormProps = {
     isRegistration: boolean,
@@ -8,26 +8,8 @@ type LoginFormProps = {
 
 
 const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSubmit, authError}) => {
-    const [formErrors, setFormErrors] = useState<string[]>([]);
+    const [formError,setFormError] = useState('');
 
-    const addToErrors = (error: string) => {
-        let currentErrors = formErrors.slice(0);
-        currentErrors.push(error);
-        setFormErrors(currentErrors);
-    };
-
-    useEffect(() => {
-        let isRunning = true;
-
-        if(isRunning && authError){
-            addToErrors(authError);
-        }
-
-        return () => { isRunning = false };
-
-    }, [authError]);
-
-    
     const onSubmit = (e: React.FormEvent) =>{
         let formIsValid = true;
         const email = (document.querySelector('input[name=email]') as HTMLInputElement).value;
@@ -42,10 +24,10 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSu
 
 
         if(email === "" || password === ""){
-            addToErrors('Please enter your login details');
+            setFormError('Please enter your login details');
             formIsValid = false;
         }else if(!validateEmail(email)){
-            addToErrors('Please enter a valid email');
+            setFormError('Please enter a valid email');
             formIsValid = false;
         }
 
@@ -55,13 +37,30 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSu
     };
 
 
+    console.log(authError);
+
+    const displayErrorIfAny = () => {
+        console.log(authError, formError);
+        let err = '';
+
+        if(authError){
+           err = authError; 
+        }else if(formError){
+            err = formError;
+        }
+
+        if(err === '') return null;
+
+        return (
+            <ul data-testid="login-errors">
+                <li>{err}</li>
+            </ul>
+        );
+    }
+
     return (
         <>
-            {formErrors && (formErrors.length > 0) &&
-                <ul data-testid="login-errors">
-                    {formErrors.map((v,i) => <li key={i}>{v}</li>)}
-                </ul>
-            }
+            {displayErrorIfAny}
             <form data-testid="login" action="post" onSubmit={onSubmit}>
                 <label htmlFor="email">Email</label><br/>
                 <input type="email" id="email" name="email"/><br/>

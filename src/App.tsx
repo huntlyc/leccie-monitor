@@ -1,17 +1,15 @@
-import React, { useState, useEffect, FunctionComponent } from 'react';
+import React, { useState, useEffect, FunctionComponent, useCallback } from 'react';
 import './App.css';
 import AlertBanner from './components/AlertBanner';
 import ReadingForm from './components/InputForm';
 import ReadingTable from './components/ReadingsTable';
 import LastReading from './components/LastReading';
 import IReading from './components/IReading';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import firebaseConfig from './firebaseConfig';
+import {FirebaseAuthentication} from './services/firebaseAuthentication'
 import UserAuthentication from './components/UserAuthentication';
 import FirebaseDataStore, { UserDatastore } from './components/Datastore';
 import TestDatastore from './components/TestDataStore';
-
+import user from './contexts/user';
 
 enum AuthState {
     init,
@@ -30,15 +28,26 @@ const App: FunctionComponent = () => {
 
     const [applicationAuthState, updateAuthState] = useState(AuthState.init);
 
-    const [firebaseUserID, setFirebaseUserID] = useState<string | null>();
+    const [firebaseUserID, setFirebaseUserID] = useState<string | null>(null);
     const logoutUser = () => {
-        firebase.auth().signOut().then(() => {
+    
+        FirebaseAuthentication.logout().then(() =>{
             setFirebaseUserID(null);
             updatePreviousReadings([]);
             shouldShowMenu(false);
         });
     };
 
+    const userisAuthenticated = useCallback((firebaseUserID: string) => {
+        setFirebaseUserID(firebaseUserID);
+        updateAuthState(AuthState.authenticated)
+        dataStore.changeUser(firebaseUserID);
+        dataStore.getAllReadings().then((res) => {
+            if(res.length > 0){
+                updatePreviousReadings(res);
+            }
+        });
+    },[dataStore]);
 
     const [showMenu, shouldShowMenu] = useState(false);
     const toggleMenu = () => {
@@ -83,43 +92,23 @@ const App: FunctionComponent = () => {
     useEffect(() => {
         let isStillRunning = true;
 
-        if (firebase.apps.length === 0) {
-            firebase.initializeApp(firebaseConfig);
-        }
-
-        firebase.auth().onIdTokenChanged((user) => {
-            if(!isStillRunning) return;
-
-            if(user){
-                setFirebaseUserID(user.uid);
-                updateAuthState(AuthState.authenticated)
-            }else{
-                updateAuthState(AuthState.noUser)
+        FirebaseAuthentication.onUserChange().then((uid) => {
+            if(isStillRunning && uid){
+                userisAuthenticated(uid);
+            }
+        }).catch(() => {
+            if(isStillRunning){
+                setFirebaseUserID(null);
+                updateAuthState(AuthState.noUser);
             }
         });
-        // eslint-disable-next-line
         return () => { isStillRunning = false };
-    }, []);
-
-
-    //Whenever our user changes
-    useEffect(() => {
-        let isReadingStore = true;
-        if(applicationAuthState === AuthState.authenticated && firebaseUserID){
-            dataStore.changeUser(firebaseUserID);
-            dataStore.getAllReadings().then((res) => {
-                if(isReadingStore && res.length > 0){
-                    updatePreviousReadings(res);
-                }
-            });
-        }
-        return () => { isReadingStore = false } ;
-    }, [firebaseUserID, dataStore]);
+    }, [userisAuthenticated]);
 
 
     const getMainContentArea = () => {
         switch(applicationAuthState){
-            case AuthState.noUser: return <UserAuthentication onAuthenticated={setFirebaseUserID} />;
+            case AuthState.noUser: return <UserAuthentication onAuthenticated={userisAuthenticated} />;
             case AuthState.authenticated: return <ReadingTable previousReadings={previousReadings}/>;
             default: return null; 
         }
@@ -142,15 +131,17 @@ const App: FunctionComponent = () => {
 
     return (
         <div className="App">
-            {applicationAuthState === AuthState.authenticated && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
-            {applicationAuthState === AuthState.authenticated && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
-            <header className="App-header">
-                <h1>Leccie Monitor</h1>
-                <p>Don&rsquo;t be left in the dark&hellip;</p>
-                {getHeaderContentArea()}
-            </header>
-            {getMainContentArea()}
-            {isRunningLow && <AlertBanner/>}
+            <user.Provider value={{ firebaseUserID, setFirebaseUserID }}>
+                {applicationAuthState === AuthState.authenticated && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
+                {applicationAuthState === AuthState.authenticated && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
+                <header className="App-header">
+                    <h1>Leccie Monitor</h1>
+                    <p>Don&rsquo;t be left in the dark&hellip;</p>
+                    {getHeaderContentArea()}
+                </header>
+                {getMainContentArea()}
+                {isRunningLow && <AlertBanner/>}
+            </user.Provider>
         </div>
     );
 }
