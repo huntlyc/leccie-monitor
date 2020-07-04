@@ -50,15 +50,15 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSu
         if(err === '') return null;
 
         return (
+            <ul data-testid="login-errors">
                 <li>{err}</li>
+            </ul>
         );
     }
 
     return (
         <>
-            <ul data-testid="login-errors">
                 {displayErrorIfAny(formError, authError)}
-            </ul>
             <form data-testid="login" action="post" onSubmit={onSubmit}>
                 <label htmlFor="email">Email</label><br/>
                 <input type="email" id="email" name="email"/><br/>

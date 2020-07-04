@@ -9,7 +9,6 @@ import {FirebaseAuthentication} from './services/firebaseAuthentication'
 import UserAuthentication from './components/UserAuthentication';
 import FirebaseDataStore, { UserDatastore } from './components/Datastore';
 import TestDatastore from './components/TestDataStore';
-import user from './contexts/user';
 
 enum AuthState {
     init,
@@ -30,7 +29,7 @@ const App: FunctionComponent = () => {
 
     const [firebaseUserID, setFirebaseUserID] = useState<string | null>(null);
     const logoutUser = () => {
-    
+
         FirebaseAuthentication.logout().then(() =>{
             setFirebaseUserID(null);
             updatePreviousReadings([]);
@@ -64,13 +63,13 @@ const App: FunctionComponent = () => {
                 date: new Date().toISOString(),
                 reading: reading
             }
-            
+
             dataStore.addReading(readingObj);
-    
+
             let readings = previousReadings.slice(0);
             readings.unshift(readingObj);
             updatePreviousReadings(readings);
-        },   
+        },
         clearAll: function(){
             updatePreviousReadings([]);
             dataStore.clearAllReadings();
@@ -79,10 +78,10 @@ const App: FunctionComponent = () => {
             if(previousReadings && previousReadings[0]){
                 return previousReadings[0];
             }
-    
+
             return false;
         }
-    };   
+    };
 
     const lastReadingValue = readings.getMostRecent();
     const isRunningLow = lastReadingValue && parseFloat(lastReadingValue.reading) < 10;
@@ -110,7 +109,7 @@ const App: FunctionComponent = () => {
         switch(applicationAuthState){
             case AuthState.noUser: return <UserAuthentication onAuthenticated={userisAuthenticated} />;
             case AuthState.authenticated: return <ReadingTable previousReadings={previousReadings}/>;
-            default: return null; 
+            default: return null;
         }
     };
 
@@ -118,7 +117,7 @@ const App: FunctionComponent = () => {
     const getHeaderContentArea = () => {
         switch(applicationAuthState){
             case AuthState.noUser: return null;
-            case AuthState.authenticated: 
+            case AuthState.authenticated:
                 return (
                     <>
                         <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
@@ -131,17 +130,15 @@ const App: FunctionComponent = () => {
 
     return (
         <div className="App">
-            <user.Provider value={{ firebaseUserID, setFirebaseUserID }}>
-                {applicationAuthState === AuthState.authenticated && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
-                {applicationAuthState === AuthState.authenticated && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
-                <header className="App-header">
-                    <h1>Leccie Monitor</h1>
-                    <p>Don&rsquo;t be left in the dark&hellip;</p>
-                    {getHeaderContentArea()}
-                </header>
-                {getMainContentArea()}
-                {isRunningLow && <AlertBanner/>}
-            </user.Provider>
+            {applicationAuthState === AuthState.authenticated && <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>}
+            {applicationAuthState === AuthState.authenticated && <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={logoutUser}>Logout</button></div>}
+            <header className="App-header">
+                <h1>Leccie Monitor</h1>
+                <p>Don&rsquo;t be left in the dark&hellip;</p>
+                {getHeaderContentArea()}
+            </header>
+            {getMainContentArea()}
+            {isRunningLow && <AlertBanner/>}
         </div>
     );
 }
