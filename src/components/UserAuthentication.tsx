@@ -3,9 +3,16 @@ import React, { FunctionComponent, useState } from 'react';
 import LoginForm from './LoginForm';
 import {FirebaseAuthentication} from '../services/firebaseAuthentication';
 
+
 type UserAuthenticationProps = {
     onAuthenticated: (firebaseUserID: string) => void,
 };
+
+
+enum Form {
+    login,
+    register
+}
 
 
 const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthenticated}) => {
@@ -28,14 +35,26 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
             setAuthError(errorMsg);
         });
 
-    }
+    };
+
+
+    const changeForm = (type: Form) => {
+        if(isLogin && type === Form.register){
+            setFormToLogin(false);
+            setAuthError('');
+        }else if(!isLogin && type === Form.login){
+            setFormToLogin(true);
+            setAuthError('');
+        }
+
+    };
 
 
     return (
         <>
             <ul className="login-options">
-                <li><button onClick={() => setFormToLogin(true)}  className={isLogin  ? 'active' :  '' }>Login</button></li>
-                <li><button onClick={() => setFormToLogin(false)} className={!isLogin ? 'active' :  '' }>Register</button></li>
+                <li><button onClick={() => changeForm(Form.login)}  className={isLogin  ? 'active' :  '' }>Login</button></li>
+                <li><button onClick={() => changeForm(Form.register)} className={!isLogin ? 'active' :  '' }>Register</button></li>
             </ul>
             <LoginForm
                 isRegistration={!isLogin}
