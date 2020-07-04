@@ -16,8 +16,10 @@ enum Form {
 
 
 const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthenticated}) => {
-    const [isLogin, setFormToLogin] = useState(true);
+    const [form, setFormTo] = useState<Form>(Form.login);
     const [authError, setAuthError] = useState('');
+
+
     const authFirebase = (email: string, pass: string) => {
         return FirebaseAuthentication.login(email, pass).then((uid) => {
             if(uid){
@@ -34,30 +36,25 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
 
             setAuthError(errorMsg);
         });
-
     };
 
 
-    const changeForm = (type: Form) => {
-        if(isLogin && type === Form.register){
-            setFormToLogin(false);
-            setAuthError('');
-        }else if(!isLogin && type === Form.login){
-            setFormToLogin(true);
+    const changeForm = (newForm: Form) => {
+        if(form !== newForm){
+            setFormTo(newForm);
             setAuthError('');
         }
-
     };
 
 
     return (
         <>
             <ul className="login-options">
-                <li><button onClick={() => changeForm(Form.login)}  className={isLogin  ? 'active' :  '' }>Login</button></li>
-                <li><button onClick={() => changeForm(Form.register)} className={!isLogin ? 'active' :  '' }>Register</button></li>
+                <li><button onClick={() => changeForm(Form.login)}  className={form === Form.login  ? 'active' :  '' }>Login</button></li>
+                <li><button onClick={() => changeForm(Form.register)} className={form === Form.register ? 'active' :  '' }>Register</button></li>
             </ul>
             <LoginForm
-                isRegistration={!isLogin}
+                isRegistration={form === Form.register}
                 onValidSubmit={authFirebase}
                 authError={authError}
             />
