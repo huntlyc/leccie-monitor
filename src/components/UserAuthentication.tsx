@@ -20,8 +20,36 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
     const [authError, setAuthError] = useState('');
 
 
-    const authFirebase = (email: string, pass: string) => {
+    const processAuthRequest = (email: string, pass: string) => {
+        if(form === Form.login){
+            return login(email, pass);
+        }else if(form === Form.register){
+            return register(email, pass);
+        }
+    };
+
+
+    const login = (email:string, pass:string) => {
         return FirebaseAuthentication.login(email, pass).then((uid) => {
+            if(uid){
+                onAuthenticated(uid);
+            }
+        }).catch((err) => {
+            let errorMsg = '';
+
+            if(typeof err == 'string'){
+                errorMsg = err;
+            }else if(err.code){
+                errorMsg = err.code;
+            }
+
+            setAuthError(errorMsg);
+        });
+    };
+
+
+    const register = (email:string, pass:string) => {
+        return FirebaseAuthentication.register(email, pass).then((uid) => {
             if(uid){
                 onAuthenticated(uid);
             }
@@ -55,7 +83,7 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
             </ul>
             <LoginForm
                 isRegistration={form === Form.register}
-                onValidSubmit={authFirebase}
+                onValidSubmit={processAuthRequest}
                 authError={authError}
             />
         </>
