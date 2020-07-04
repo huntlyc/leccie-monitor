@@ -37,14 +37,12 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSu
     };
 
 
-    console.log(authError);
 
-    const displayErrorIfAny = () => {
-        console.log(authError, formError);
+    const displayErrorIfAny = (formError: string, authError: string) => {
         let err = '';
 
         if(authError){
-           err = authError; 
+           err = authError;
         }else if(formError){
             err = formError;
         }
@@ -52,15 +50,15 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSu
         if(err === '') return null;
 
         return (
-            <ul data-testid="login-errors">
                 <li>{err}</li>
-            </ul>
         );
     }
 
     return (
         <>
-            {displayErrorIfAny}
+            <ul data-testid="login-errors">
+                {displayErrorIfAny(formError, authError)}
+            </ul>
             <form data-testid="login" action="post" onSubmit={onSubmit}>
                 <label htmlFor="email">Email</label><br/>
                 <input type="email" id="email" name="email"/><br/>
@@ -68,7 +66,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({isRegistration, onValidSu
                 <label htmlFor="password">Password</label><br/>
                 <input type="password" id="password" name="password"/><br/>
                 <br/>
-                {isRegistration 
+                {isRegistration
                   ? <button type="submit">Sign up</button>
                   : <button type="submit">Sign in</button>
                 }
