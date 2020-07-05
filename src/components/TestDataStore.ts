@@ -1,4 +1,4 @@
-import { UserDatastore } from "./Datastore";
+import { UserDatastore } from "./FirebaseDatastore";
 import IReading from "./IReading";
 
 class TestDatastore implements UserDatastore{
