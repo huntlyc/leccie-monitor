@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState, FunctionComponent, useEffect } from 'react';
 import './App.css';
 import AlertBanner from './components/AlertBanner';
 import ReadingForm from './components/InputForm';
@@ -6,36 +6,21 @@ import ReadingTable from './components/ReadingsTable';
 import LastReading from './components/LastReading';
 import IReading from './components/IReading';
 import UserAuthentication from './components/UserAuthentication';
-import { useAuth } from './hooks/useAuth'
-import DataStore from './components/Datastore';
+import { useFirebase } from './hooks/useAuth'
 
 
 const App: FunctionComponent = () => {
 
-    const auth = useAuth();
-
-
-    const userLoggedOut = () => {
-        updatePreviousReadings([]);
-        shouldShowMenu(false);
-    };
-
-    // const userisAuthenticated = useCallback((firebaseUserID: string) => {
-    //     dataStore.changeUser(firebaseUserID);
-    //     dataStore.getAllReadings().then((res) => {
-    //         if(res.length > 0){
-    //             updatePreviousReadings(res);
-    //         }
-    //     });
-    // },[dataStore]);
-
+    const [isLoading, setIsLoadingTo] = useState(true);
+    const firebase = useFirebase();
     const [showMenu, shouldShowMenu] = useState(false);
+    const [previousReadings, updatePreviousReadings] = useState<IReading[]>([]);
+
+
     const toggleMenu = () => {
         shouldShowMenu(!showMenu);
     };
 
-
-    const [previousReadings, updatePreviousReadings] = useState<IReading[]>([]);
 
     // Small collection of utility functions related to readings
     const readings = {
@@ -46,11 +31,9 @@ const App: FunctionComponent = () => {
                 reading: reading
             }
 
-            if(auth && auth?.user && auth?.user?.uid){
-                let ds = new DataStore();
-                let dataStore = ds.get(auth.user.uid);
+            if(firebase && firebase?.user && firebase?.dataStore){
 
-                dataStore.addReading(readingObj);
+                firebase.dataStore.addReading(readingObj);
 
                 let readings = previousReadings.slice(0);
                 readings.unshift(readingObj);
@@ -58,11 +41,9 @@ const App: FunctionComponent = () => {
             }
         },
         clearAll: function(){
-            if(auth && auth?.user && auth?.user?.uid){
-                let ds = new DataStore();
-                let dataStore = ds.get(auth?.user?.uid);
+            if(firebase && firebase?.user && firebase?.dataStore){
                 updatePreviousReadings([]);
-                dataStore.clearAllReadings();
+                firebase.dataStore.clearAllReadings();
             }
         },
         getMostRecent: function(){
@@ -74,13 +55,48 @@ const App: FunctionComponent = () => {
         }
     };
 
-    const lastReadingValue = readings.getMostRecent();
-    const isRunningLow = lastReadingValue && parseFloat(lastReadingValue.reading) < 10;
+
+    const userLoggedOut = () => {
+        updatePreviousReadings([]);
+        shouldShowMenu(false);
+
+        if(firebase){
+            firebase.signout();
+
+            if(firebase.dataStore){
+                firebase.dataStore.clearAllReadings();
+            }
+        }
+    };
+
+
+    useEffect(() => {
+        let isActive = true;
+
+        if(firebase && firebase.dataStore){
+            firebase.dataStore.getAllReadings().then((res) => {
+                if(isActive){
+                    if(res.length > 0){
+                        updatePreviousReadings(res);
+                    }
+                } 
+            });
+        }
+
+        setIsLoadingTo(false);
+
+        return () => { isActive = false };
+    },[firebase]);
+
+    
+
 
     const getMainContentArea = () => {
-        if(!auth) return null;
+        if(isLoading) return <p>Loading...</p>;
 
-        if(auth.user){
+        if(!firebase) return null;
+
+        if(firebase.user){
             return <ReadingTable previousReadings={previousReadings}/>;
         }else{
             return <UserAuthentication />;
@@ -88,8 +104,12 @@ const App: FunctionComponent = () => {
     };
 
 
+    const lastReadingValue = readings.getMostRecent();
+    const isRunningLow = lastReadingValue && parseFloat(lastReadingValue.reading) < 10;
+
+
     const getHeaderContentArea = () => {
-        if(auth && auth.user){
+        if(firebase && firebase.user){
             return (
                 <>
                     <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
@@ -98,11 +118,12 @@ const App: FunctionComponent = () => {
             );
         }
         return null;
-    }
+    };
+
 
     return (
             <div className="App">
-                {auth && auth.user &&
+                {firebase && firebase.user &&
                     <>
                         <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>
                         <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={userLoggedOut}>Logout</button></div>
@@ -118,5 +139,6 @@ const App: FunctionComponent = () => {
             </div>
     );
 }
+
 
 export default App;
