@@ -1,12 +1,6 @@
-
 import React, { FunctionComponent, useState } from 'react';
 import LoginForm from './LoginForm';
-import {FirebaseAuthentication} from '../services/firebaseAuthentication';
-
-
-type UserAuthenticationProps = {
-    onAuthenticated: (firebaseUserID: string) => void,
-};
+import {useFirebase} from '../hooks/useAuth'
 
 
 enum Form {
@@ -15,9 +9,10 @@ enum Form {
 }
 
 
-const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthenticated}) => {
+const UserAuthentication: FunctionComponent = () => {
     const [form, setFormTo] = useState<Form>(Form.login);
     const [authError, setAuthError] = useState('');
+    const firebase = useFirebase();
 
 
     const processAuthRequest = (email: string, pass: string) => {
@@ -30,11 +25,7 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
 
 
     const login = (email:string, pass:string) => {
-        return FirebaseAuthentication.login(email, pass).then((uid) => {
-            if(uid){
-                onAuthenticated(uid);
-            }
-        }).catch((err) => {
+        return firebase?.signin(email, pass).catch((err) => {
             let errorMsg = '';
 
             if(typeof err == 'string'){
@@ -49,11 +40,7 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = ({onAuthe
 
 
     const register = (email:string, pass:string) => {
-        return FirebaseAuthentication.register(email, pass).then((uid) => {
-            if(uid){
-                onAuthenticated(uid);
-            }
-        }).catch((err) => {
+        return firebase?.signup(email, pass).catch((err) => {
             let errorMsg = '';
 
             if(typeof err == 'string'){
