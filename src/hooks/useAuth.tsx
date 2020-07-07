@@ -44,9 +44,8 @@ function useFirebaseProvider(): FirebaseProvider {
             .signInWithEmailAndPassword(email, password)
             .then(response => {
                 if (response.user?.uid) {
-                    let ds = new DataStore();
                     setUser(response.user);
-                    setDataStore(ds.get(response.user.uid));
+                    setDataStore(DataStore.get(response.user.uid));
                 }
                 return response.user;
             });
@@ -59,9 +58,8 @@ function useFirebaseProvider(): FirebaseProvider {
             .createUserWithEmailAndPassword(email, password)
             .then(response => {
                 if (response.user?.uid) {
-                    let ds = new DataStore();
                     setUser(response.user);
-                    setDataStore(ds.get(response.user.uid));
+                    setDataStore(DataStore.get(response.user.uid));
                 }
                 return response.user;
             });
@@ -106,8 +104,7 @@ function useFirebaseProvider(): FirebaseProvider {
             if (user) {
                 setUser(user);
                 if (user?.uid) {
-                    let ds = new DataStore();
-                    setDataStore(ds.get(user.uid));
+                    setDataStore(DataStore.get(user.uid));
                 }
             } else {
                 setUser(null);
