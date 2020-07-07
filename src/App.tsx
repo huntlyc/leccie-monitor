@@ -88,8 +88,6 @@ const App: FunctionComponent = () => {
         return () => { isActive = false };
     },[firebase]);
 
-    
-
 
     const getMainContentArea = () => {
         if(isLoading) return <p>Loading...</p>;
@@ -122,21 +120,21 @@ const App: FunctionComponent = () => {
 
 
     return (
-            <div className="App">
-                {firebase && firebase.user &&
-                    <>
-                        <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>
-                        <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={userLoggedOut}>Logout</button></div>
-                    </>
-                }
-                <header className="App-header">
-                    <h1>Leccie Monitor</h1>
-                    <p>Don&rsquo;t be left in the dark&hellip;</p>
-                    {getHeaderContentArea()}
-                </header>
-                {getMainContentArea()}
-                {isRunningLow && <AlertBanner/>}
-            </div>
+        <div className="App">
+            {firebase && firebase.user &&
+                <>
+                    <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>
+                    <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={userLoggedOut}>Logout</button></div>
+                </>
+            }
+            <header className="App-header">
+                <h1>Leccie Monitor</h1>
+                <p>Don&rsquo;t be left in the dark&hellip;</p>
+                {getHeaderContentArea()}
+            </header>
+            {getMainContentArea()}
+            {isRunningLow && <AlertBanner/>}
+        </div>
     );
 }
 
