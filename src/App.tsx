@@ -62,13 +62,8 @@ const App: FunctionComponent = () => {
 
         if(firebase){
             firebase.signout();
-
-            if(firebase.dataStore){
-                firebase.dataStore.clearAllReadings();
-            }
         }
     };
-
 
     useEffect(() => {
         let isActive = true;
@@ -118,13 +113,23 @@ const App: FunctionComponent = () => {
         return null;
     };
 
+    const clearReadings = function(e: React.FormEvent){
+        e.preventDefault();
+        readings.clearAll();
+    };
 
     return (
         <div className="App">
             {firebase && firebase.user &&
                 <>
                     <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>
-                    <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}><button onClick={userLoggedOut}>Logout</button></div>
+                    <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}>
+                        <ul>
+                            <li><button onClick={clearReadings}>Clear Readings</button></li>
+                        </ul>
+                        <button onClick={userLoggedOut}>Logout</button>
+
+                    </div>
                 </>
             }
             <header className="App-header">

@@ -7,7 +7,7 @@ export interface UserDatastore{
     addReading: (reading: IReading) => void,
     changeUser: (newUid: string) => void,
     getAllReadings: () => Promise<Array<IReading>>,
-    clearAllReadings: () => Promise<void> | false
+    clearAllReadings: () => Promise<void> | undefined
 };
 
 
@@ -47,27 +47,25 @@ class FirebaseDataStore implements UserDatastore{
 
 
     async addReading(reading: IReading){
-        let readingRef = firebase.firestore().collection('readingLists').doc(this.uid).collection('readings');
 
-        if(readingRef){
-            return readingRef.add({
+        if(this.readingRef){
+            return this.readingRef.add({
                 uid: this.uid,
                 reading: reading.reading,
                 date: reading.date
             });
         }
 
-
         return false;
     }
 
 
     clearAllReadings(){
-        if(this.readingRef?.parent){
-            return this.readingRef.parent?.delete();
-        }
-
-        return false;
+        return this.readingRef?.get().then((res) => {
+            res.forEach((doc) => {
+                doc.ref.delete();
+            });
+        });
     }
 
 
