@@ -14,7 +14,7 @@ interface IProps {
 
 
 type FirebaseProvider = {
-    user: firebase.User | null;
+    user: firebase.User | false | null;
     dataStore: UserDatastore | null;
     signin: (email: string, password: string) => Promise<firebase.User | null>;
     signup: (email: string, password: string) => Promise<firebase.User | null>;
@@ -34,7 +34,7 @@ export function ProvideAuth({ children }: IProps) {
 
 
 function useFirebaseProvider(): FirebaseProvider {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User | null | false>(false);
     const [dataStore, setDataStore] = useState<UserDatastore | null>(null);
 
 

@@ -68,17 +68,21 @@ const App: FunctionComponent = () => {
     useEffect(() => {
         let isActive = true;
 
-        if(firebase && firebase.dataStore){
-            firebase.dataStore.getAllReadings().then((res) => {
-                if(isActive){
-                    if(res.length > 0){
-                        updatePreviousReadings(res);
-                    }
-                } 
-            });
+        if(firebase && firebase.user !== false){
+            if(isActive){
+                setIsLoadingTo(false);
+            }
+            if(firebase.dataStore){
+                firebase.dataStore.getAllReadings().then((res) => {
+                    if(isActive){
+                        if(res.length > 0){
+                            updatePreviousReadings(res);
+                        }
+                    } 
+                });
+            }
         }
 
-        setIsLoadingTo(false);
 
         return () => { isActive = false };
     },[firebase]);
@@ -119,25 +123,27 @@ const App: FunctionComponent = () => {
     };
 
     return (
-        <div className="App">
+        <div className="app">
             {firebase && firebase.user &&
-                <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}>
-                    <div>
-                        <button className="close" onClick={toggleMenu}><span className="sr-only">Close </span>&times;</button>
-                        <ul>
-                            <li><button onClick={clearReadings}>Clear Readings</button></li>
-                        </ul>
-                    </div>
-                    <button onClick={userLoggedOut}>Logout</button>
+                <>
+                    <button name="menu" onClick={toggleMenu}><img alt="Menu Icon - click to toggle menu" src={process.env.PUBLIC_URL + "/gear.svg"}/><span className="sr-only">{showMenu ? 'Close' : 'Menu'}</span></button>
+                    {showMenu && <div onClick={toggleMenu} className="overlay"></div>}
+                    <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}>
+                        <div>
+                            <button className="close" onClick={toggleMenu}><span className="sr-only">Close </span>&times;</button>
+                            <ul>
+                                <li><button onClick={clearReadings}>Clear Readings</button></li>
+                            </ul>
+                        </div>
+                        <button onClick={userLoggedOut}>Logout</button>
 
-                </div>
+                    </div>
+                </>
             }
             <header className="App-header">
                 <h1>Leccie Monitor
-                {firebase && firebase.user &&
-                    <button name="menu" onClick={toggleMenu}><img alt="Menu Icon - click to toggle menu" src={process.env.PUBLIC_URL + "/gear.svg"}/><span className="sr-only">{showMenu ? 'Close' : 'Menu'}</span></button>
-                }</h1>
-                <p>Don&rsquo;t be left in the dark&hellip;</p>
+                </h1>
+                {isLoading && <p>Don&rsquo;t be left in the dark&hellip;</p>}
                 {getHeaderContentArea()}
             </header>
             {getMainContentArea()}
