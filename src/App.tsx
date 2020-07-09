@@ -6,7 +6,7 @@ import ReadingTable from './components/ReadingsTable';
 import LastReading from './components/LastReading';
 import IReading from './components/IReading';
 import UserAuthentication from './components/UserAuthentication';
-import { useFirebase } from './hooks/useAuth';
+import { useFirebase } from './hooks/useFirebase';
 
 
 const App: FunctionComponent = () => {

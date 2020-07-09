@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import { ProvideAuth  } from './hooks/useAuth'
+import { ProvideAuth  } from './hooks/useFirebase'
 
 
 ReactDOM.render(

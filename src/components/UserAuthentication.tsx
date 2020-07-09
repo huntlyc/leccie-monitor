@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import LoginForm from './LoginForm';
-import {useFirebase} from '../hooks/useAuth'
+import {useFirebase} from '../hooks/useFirebase'
 
 
 enum Form {
