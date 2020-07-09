@@ -6,7 +6,7 @@ import ReadingTable from './components/ReadingsTable';
 import LastReading from './components/LastReading';
 import IReading from './components/IReading';
 import UserAuthentication from './components/UserAuthentication';
-import { useFirebase } from './hooks/useAuth'
+import { useFirebase } from './hooks/useAuth';
 
 
 const App: FunctionComponent = () => {
@@ -121,19 +121,22 @@ const App: FunctionComponent = () => {
     return (
         <div className="App">
             {firebase && firebase.user &&
-                <>
-                    <button name="menu" onClick={toggleMenu}>{showMenu ? 'Close' : 'Menu'}</button>
-                    <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}>
+                <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}>
+                    <div>
+                        <button className="close" onClick={toggleMenu}><span className="sr-only">Close </span>&times;</button>
                         <ul>
                             <li><button onClick={clearReadings}>Clear Readings</button></li>
                         </ul>
-                        <button onClick={userLoggedOut}>Logout</button>
-
                     </div>
-                </>
+                    <button onClick={userLoggedOut}>Logout</button>
+
+                </div>
             }
             <header className="App-header">
-                <h1>Leccie Monitor</h1>
+                <h1>Leccie Monitor
+                {firebase && firebase.user &&
+                    <button name="menu" onClick={toggleMenu}><img alt="Menu Icon - click to toggle menu" src={process.env.PUBLIC_URL + "/gear.svg"}/><span className="sr-only">{showMenu ? 'Close' : 'Menu'}</span></button>
+                }</h1>
                 <p>Don&rsquo;t be left in the dark&hellip;</p>
                 {getHeaderContentArea()}
             </header>

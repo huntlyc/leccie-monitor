@@ -90,6 +90,9 @@ h1,h2,th,strong{
 }
 
 header h1{
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
   text-shadow: 2px 2px 20px #fff79d; /** pretend to be a lit up sign **/
   margin-bottom: 0;
   padding-bottom: 0;
@@ -212,19 +215,23 @@ td.positive{
 
 /** settings popup, slides in from bottom when main h1 clicked **/
 .popup{
+  box-sizing: border-box;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 1.5rem 0 3rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  top: 0;
+  right: 0;
+  height: 100%;
+  padding: 1.5rem 1rem 3rem 1rem;
   background-color: #2e3442;
   box-shadow: 0 0 20px black;
-  transform: translateY(calc(100% + 20px));
+  transform: translateX(100%);
   transition: transform 0.2s ease-in;
 }
 
 .popup.active{
-  transform: translateY(0);
+  transform: translateX(0);
 }
 
 .popup h2{
@@ -232,8 +239,10 @@ td.positive{
 }
 
 .popup ul{
+  clear: both;
   list-style-type: none;
   margin: 0;
+  margin-top: 6rem;
   padding: 0;
   display: flex;
   flex-direction: row;
@@ -244,6 +253,34 @@ td.positive{
   padding: 0 1rem;
 }
 
+.popup button{
+  background-color: transparent;
+  color: #09d3ac;
+  transition: color 0.2s linear, border-color 0.2s linear;
+}
+.popup button:active,
+.popup button:focus,
+.popup button:hover{
+  color: #fff;
+  border-color: #fff;
+}
+
+
+.popup button.close{
+  border: none;
+  float: right;
+  font-size: 3rem;
+}
+.popup ul li button{
+  color: #09d3ac;
+  background-color: transparent;
+  border-radius: none;
+  outline: none;
+  border: none;
+  font-weight: normal;
+  letter-spacing: 1px;
+
+}
 /* ghost style buttons */
 .popup a{
   text-decoration: none;
@@ -286,8 +323,11 @@ ul.login-options li button.active{
 
 
 button[name="menu"]{
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: transparent;
+  padding: 0px;
+  border-radius: 0;
+  margin: 0 20px 0 10px;
 }
