@@ -143,7 +143,7 @@ const App: FunctionComponent = () => {
             <header className="App-header">
                 <h1>Leccie Monitor
                 </h1>
-                {isLoading && <p>Don&rsquo;t be left in the dark&hellip;</p>}
+                {!firebase?.user && <p>Don&rsquo;t be left in the dark&hellip;</p>}
                 {getHeaderContentArea()}
             </header>
             {getMainContentArea()}
