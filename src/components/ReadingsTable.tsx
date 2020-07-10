@@ -2,21 +2,26 @@ import React from 'react';
 import IReading from './IReading';
 import {formatRelativeToDate} from '../Utils';
 
-const ReadingTable = function(props: any){
 
-    if (!props.previousReadings || props.previousReadings.length === 0) return <p data-testid="no-reading-message">Enter your first reading to get started!</p>;
+type ReadingTableProps = {
+    previousReadings: IReading[]
+}
+const ReadingTable:React.FC<ReadingTableProps> = ({previousReadings}) => {
+
+    if (!previousReadings || previousReadings.length === 0) return <p data-testid="no-reading-message">Enter your first reading to get started!</p>;
 
     const renderPreviousReadingTableRow = (reading: IReading, currentIndex: number): JSX.Element => {
 
-        let clsName: string = '';
-        let txtDiff: string = ' \u2014 ';
+        let clsName = '';
+        let txtDiff = ' \u2014 ';
+        let curReading = parseFloat(reading.reading);
 
-        //don't run on the first result as there's no difference!!
-        if (currentIndex < props.previousReadings.length - 1) {
+        // Run diff on every element except the last (which is the first user input value)
+        // Readings is a FILO stack
+        if (currentIndex < previousReadings.length - 1) {
 
-            let diff: number = 0;
-            let curReading: number = parseFloat(reading.reading);
-            let prevReading: number = parseFloat(props.previousReadings[++currentIndex].reading);
+            let diff = 0;
+            let prevReading = parseFloat(previousReadings[++currentIndex].reading);
 
             diff = curReading - prevReading;
 
@@ -34,7 +39,7 @@ const ReadingTable = function(props: any){
         }
 
         return (
-            <tr className={currentIndex === 1 && props.lastReading && parseFloat(props.lastReading.reading) < 10 ? 'danger-row' : ''} key={reading.date}>
+            <tr className={currentIndex === 1 && curReading < 10 ? 'danger-row' : ''} key={reading.date}>
                 <td>&pound;{reading.reading}</td>
                 <td className={clsName}>{txtDiff}</td>
                 <td className="date">{formatRelativeToDate(reading.date, new Date().toISOString())}</td>
@@ -54,12 +59,12 @@ const ReadingTable = function(props: any){
                     </tr>
                 </thead>
                 <tbody>
-                    {props.previousReadings.map(renderPreviousReadingTableRow)}
+                    {previousReadings.map(renderPreviousReadingTableRow)}
                 </tbody>
             </table>
         </div>
     );
-
 };
+
 
 export default ReadingTable;

@@ -102,6 +102,12 @@ const App: FunctionComponent = () => {
 
     const lastReadingValue = readings.getMostRecent();
     const isRunningLow = lastReadingValue && parseFloat(lastReadingValue.reading) < 10;
+    let alertMessage = 'Running low, go top up!!!';
+    if(lastReadingValue && parseFloat(lastReadingValue.reading) < 0){
+        alertMessage = '!! ON EMERGENCY CREDIT !!';
+
+    }
+
 
     const clearReadings = function (e: React.FormEvent) {
         e.preventDefault();
@@ -135,7 +141,7 @@ const App: FunctionComponent = () => {
                 }
             </header>
             {getMainContentArea()}
-            {isRunningLow && <AlertBanner />}
+            {isRunningLow && <AlertBanner message={alertMessage} />}
         </div>
     );
 }
