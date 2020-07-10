@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import IReading from './IReading';
+
 
 type AlertProps = {
     message: string
