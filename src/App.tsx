@@ -3,7 +3,6 @@ import './App.css';
 import AlertBanner from './components/AlertBanner';
 import ReadingForm from './components/InputForm';
 import ReadingTable from './components/ReadingsTable';
-import LastReading from './components/LastReading';
 import IReading from './components/IReading';
 import UserAuthentication from './components/UserAuthentication';
 import { useFirebase } from './hooks/useFirebase';
@@ -24,14 +23,14 @@ const App: FunctionComponent = () => {
 
     // Small collection of utility functions related to readings
     const readings = {
-        add: function(reading: string){
+        add: function (reading: string) {
 
             const readingObj: IReading = {
                 date: new Date().toISOString(),
                 reading: reading
             }
 
-            if(firebase && firebase?.user && firebase?.dataStore){
+            if (firebase && firebase?.user && firebase?.dataStore) {
 
                 firebase.dataStore.addReading(readingObj);
 
@@ -40,14 +39,14 @@ const App: FunctionComponent = () => {
                 updatePreviousReadings(readings);
             }
         },
-        clearAll: function(){
-            if(firebase && firebase?.user && firebase?.dataStore){
+        clearAll: function () {
+            if (firebase && firebase?.user && firebase?.dataStore) {
                 updatePreviousReadings([]);
                 firebase.dataStore.clearAllReadings();
             }
         },
-        getMostRecent: function(){
-            if(previousReadings && previousReadings[0]){
+        getMostRecent: function () {
+            if (previousReadings && previousReadings[0]) {
                 return previousReadings[0];
             }
 
@@ -60,7 +59,7 @@ const App: FunctionComponent = () => {
         updatePreviousReadings([]);
         shouldShowMenu(false);
 
-        if(firebase){
+        if (firebase) {
             firebase.signout();
         }
     };
@@ -68,34 +67,34 @@ const App: FunctionComponent = () => {
     useEffect(() => {
         let isActive = true;
 
-        if(firebase && firebase.user !== false){
-            if(isActive){
+        if (firebase && firebase.user !== false) {
+            if (isActive) {
                 setIsLoadingTo(false);
             }
-            if(firebase.dataStore){
+            if (firebase.dataStore) {
                 firebase.dataStore.getAllReadings().then((res) => {
-                    if(isActive){
-                        if(res.length > 0){
+                    if (isActive) {
+                        if (res.length > 0) {
                             updatePreviousReadings(res);
                         }
-                    } 
+                    }
                 });
             }
         }
 
 
         return () => { isActive = false };
-    },[firebase]);
+    }, [firebase]);
 
 
     const getMainContentArea = () => {
-        if(isLoading) return <p>Loading...</p>;
+        if (isLoading) return <p>Loading...</p>;
 
-        if(!firebase) return null;
+        if (!firebase) return null;
 
-        if(firebase.user){
-            return <ReadingTable previousReadings={previousReadings}/>;
-        }else{
+        if (firebase.user) {
+            return <ReadingTable previousReadings={previousReadings} />;
+        } else {
             return <UserAuthentication />;
         }
     };
@@ -104,20 +103,7 @@ const App: FunctionComponent = () => {
     const lastReadingValue = readings.getMostRecent();
     const isRunningLow = lastReadingValue && parseFloat(lastReadingValue.reading) < 10;
 
-
-    const getHeaderContentArea = () => {
-        if(firebase && firebase.user){
-            return (
-                <>
-                    <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
-                    {lastReadingValue && <LastReading reading={lastReadingValue} isRunningLow={isRunningLow} />}
-                </>
-            );
-        }
-        return null;
-    };
-
-    const clearReadings = function(e: React.FormEvent){
+    const clearReadings = function (e: React.FormEvent) {
         e.preventDefault();
         readings.clearAll();
     };
@@ -126,7 +112,7 @@ const App: FunctionComponent = () => {
         <div className="app">
             {firebase && firebase.user &&
                 <>
-                    <button name="menu" onClick={toggleMenu}><img alt="Menu Icon - click to toggle menu" src={process.env.PUBLIC_URL + "/gear.svg"}/><span className="sr-only">{showMenu ? 'Close' : 'Menu'}</span></button>
+                    <button name="menu" onClick={toggleMenu}><img alt="Menu Icon - click to toggle menu" src={process.env.PUBLIC_URL + "/gear.svg"} /><span className="sr-only">{showMenu ? 'Close' : 'Menu'}</span></button>
                     {showMenu && <div onClick={toggleMenu} className="overlay"></div>}
                     <div data-testid="menu" className={showMenu ? 'popup active' : 'popup'}>
                         <div>
@@ -144,10 +130,12 @@ const App: FunctionComponent = () => {
                 <h1>Leccie Monitor
                 </h1>
                 {!firebase?.user && <p>Don&rsquo;t be left in the dark&hellip;</p>}
-                {getHeaderContentArea()}
+                {firebase && firebase.user &&
+                    <ReadingForm onSuccess={readings.add} onClear={readings.clearAll} />
+                }
             </header>
             {getMainContentArea()}
-            {isRunningLow && <AlertBanner/>}
+            {isRunningLow && <AlertBanner />}
         </div>
     );
 }

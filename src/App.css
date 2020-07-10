@@ -172,7 +172,7 @@ button:hover{
 
 
 /** previous readings section (with table) **/
-section#last-readings{
+div#last-readings{
   padding: 2rem 0 4rem 0;
 }
 

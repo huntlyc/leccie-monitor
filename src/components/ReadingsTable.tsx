@@ -44,8 +44,7 @@ const ReadingTable = function(props: any){
 
 
     return (
-        <section id="last-readings">
-            <h2>Previous Readings</h2>
+        <div id="last-readings">
             <table>
                 <thead>
                     <tr>
@@ -58,7 +57,7 @@ const ReadingTable = function(props: any){
                     {props.previousReadings.map(renderPreviousReadingTableRow)}
                 </tbody>
             </table>
-        </section>
+        </div>
     );
 
 };
