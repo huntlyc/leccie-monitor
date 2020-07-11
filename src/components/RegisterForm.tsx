@@ -1,5 +1,5 @@
-import React, { FunctionComponent, useState } from 'react';
-import { RouteComponentProps } from '@reach/router';
+import React, { FunctionComponent, useState, useEffect } from 'react';
+import { RouteComponentProps, navigate } from '@reach/router';
 import { useFirebase } from '../hooks/useFirebase';
 
 interface RegisterFormProps extends RouteComponentProps{
@@ -66,6 +66,20 @@ const RegisterForm: FunctionComponent<RegisterFormProps> = (props: RegisterFormP
             </ul>
         );
     }
+
+
+    useEffect(() => {
+        let isActive = true;
+
+        if (firebase && firebase.user !== false) {
+            if (firebase.dataStore && isActive) {
+               navigate('/'); 
+            }
+        }
+
+
+        return () => { isActive = false };
+    }, [firebase]);
 
     return (
         <>
