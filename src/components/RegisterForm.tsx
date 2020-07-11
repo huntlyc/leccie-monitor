@@ -1,17 +1,16 @@
-import React, { FunctionComponent, useState, useEffect } from 'react';
-import { RouteComponentProps, Link, navigate } from '@reach/router';
+import React, { FunctionComponent, useState } from 'react';
+import { RouteComponentProps } from '@reach/router';
 import { useFirebase } from '../hooks/useFirebase';
 
-interface LoginFormProps extends RouteComponentProps{
+interface RegisterFormProps extends RouteComponentProps{
 };
 
 
-const LoginForm: FunctionComponent<LoginFormProps> = (props: LoginFormProps) => {
+const RegisterForm: FunctionComponent<RegisterFormProps> = (props: RegisterFormProps) => {
     const [formError,setFormError] = useState('');
     const firebase = useFirebase();
-
-    const login = (email:string, pass:string) => {
-        return firebase?.signin(email, pass).catch((err) => {
+    const register = (email:string, pass:string) => {
+        return firebase?.signup(email, pass).catch((err) => {
             let errorMsg = '';
 
             if(typeof err == 'string'){
@@ -46,7 +45,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props: LoginFormProps) => 
         }
 
         if(formIsValid){
-            login(email, password);
+            register(email, password);
         }
     };
 
@@ -66,20 +65,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props: LoginFormProps) => 
                 <li>{err}</li>
             </ul>
         );
-    };
-    
-    useEffect(() => {
-        let isActive = true;
-
-        if (firebase && firebase.user !== false) {
-            if (firebase.dataStore && isActive) {
-               navigate('/'); 
-            }
-        }
-
-
-        return () => { isActive = false };
-    }, [firebase]);
+    }
 
     return (
         <>
@@ -91,12 +77,11 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props: LoginFormProps) => 
                 <label htmlFor="password">Password</label><br/>
                 <input type="password" id="password" name="password"/><br/>
                 <br/>
-                <button type="submit">Sign in</button>
+                <button type="submit">Sign up</button>
             </form>
-            <p>Forgot your password? <Link to="/user/resetpassword">Reset your password</Link></p>
         </>
     );
 };
 
 
-export default LoginForm;
+export default RegisterForm;

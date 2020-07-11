@@ -6,6 +6,7 @@ import DataStore from "../components/Datastore";
 import { UserDatastore } from "../components/FirebaseDatastore";
 
 firebase.initializeApp(firebaseConfig);
+firebase.firestore().enablePersistence().catch((err) => console.log(err));
 
 
 interface IProps {
@@ -77,25 +78,23 @@ function useFirebaseProvider(): FirebaseProvider {
     };
 
 
-    const sendPasswordResetEmail = (email: string) => { throw new Error('Not Implemented'); }
-    // const sendPasswordResetEmail = (email:string) => {
-    //   return firebase
-    //     .auth()
-    //     .sendPasswordResetEmail(email)
-    //     .then(() => {
-    //       return true;
-    //     });
-    // };
+    const sendPasswordResetEmail = (email:string) => {
+      return firebase
+        .auth()
+        .sendPasswordResetEmail(email)
+        .then(() => {
+          return true;
+        });
+    };
 
-    const confirmPasswordReset = (email: string) => { throw new Error('Not Implemented'); }
-    // const confirmPasswordReset = (code:string, password:string) => {
-    //   return firebase
-    //     .auth()
-    //     .confirmPasswordReset(code, password)
-    //     .then(() => {
-    //       return true;
-    //     });
-    // };
+    const confirmPasswordReset = (code:string, password:string) => {
+      return firebase
+        .auth()
+        .confirmPasswordReset(code, password)
+        .then(() => {
+          return true;
+        });
+    };
 
 
     // put a watch on for a user state change (previously logged in)

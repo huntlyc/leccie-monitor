@@ -1,7 +1,6 @@
 import IReading from "./IReading";
 import firebase from "firebase/app";
 import 'firebase/firestore';
-import firebaseConfig from "../firebaseConfig";
 
 export interface UserDatastore{
     addReading: (reading: IReading) => void,
@@ -70,10 +69,6 @@ class FirebaseDataStore implements UserDatastore{
 
 
     private configureFirebase(){
-        if (firebase.apps.length === 0) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        firebase.firestore().enablePersistence().catch((err) => console.log(err));
         this.readingRef = firebase.firestore().collection('readingLists').doc(this.uid).collection('readings');
     }
 }

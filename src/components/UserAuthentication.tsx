@@ -1,78 +1,37 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import LoginForm from './LoginForm';
-import {useFirebase} from '../hooks/useFirebase'
+import { RouteComponentProps, Router, Link } from '@reach/router';
+import RegisterForm from './RegisterForm';
+import UserDash from './UserDash';
+import ResetPassword from './ResetPassword';
 
 
-enum Form {
-    login,
-    register
+interface UserAuthenticationProps extends RouteComponentProps{
+    // Nothing extra to add...
 }
 
 
-const UserAuthentication: FunctionComponent = () => {
-    const [form, setFormTo] = useState<Form>(Form.login);
-    const [authError, setAuthError] = useState('');
-    const firebase = useFirebase();
-
-
-    const processAuthRequest = (email: string, pass: string) => {
-        if(form === Form.login){
-            return login(email, pass);
-        }else if(form === Form.register){
-            return register(email, pass);
-        }
-    };
-
-
-    const login = (email:string, pass:string) => {
-        return firebase?.signin(email, pass).catch((err) => {
-            let errorMsg = '';
-
-            if(typeof err == 'string'){
-                errorMsg = err;
-            }else if(err.code){
-                errorMsg = err.code;
-            }
-
-            setAuthError(errorMsg);
-        });
-    };
-
-
-    const register = (email:string, pass:string) => {
-        return firebase?.signup(email, pass).catch((err) => {
-            let errorMsg = '';
-
-            if(typeof err == 'string'){
-                errorMsg = err;
-            }else if(err.code){
-                errorMsg = err.code;
-            }
-
-            setAuthError(errorMsg);
-        });
-    };
-
-
-    const changeForm = (newForm: Form) => {
-        if(form !== newForm){
-            setFormTo(newForm);
-            setAuthError('');
-        }
-    };
-
-
+const UserAuthentication: FunctionComponent<UserAuthenticationProps> = (props: UserAuthenticationProps) => {
     return (
         <>
-            <ul className="login-options">
-                <li><button onClick={() => changeForm(Form.login)}  className={form === Form.login  ? 'active' :  '' }>Login</button></li>
-                <li><button onClick={() => changeForm(Form.register)} className={form === Form.register ? 'active' :  '' }>Register</button></li>
-            </ul>
-            <LoginForm
-                isRegistration={form === Form.register}
-                onValidSubmit={processAuthRequest}
-                authError={authError}
-            />
+            <nav>
+                <Link to="login">Login</Link>
+                <Link to="register">Register</Link>
+            </nav>
+            <Router>
+                <LoginForm 
+                    path="login"
+                />
+                <RegisterForm 
+                    path="register"
+                />
+                <ResetPassword
+                    path="resetpassword"
+                />
+                <UserDash
+                    default
+                />
+            </Router>
         </>
     );
 }

@@ -17,7 +17,12 @@ body{
   font-size: 20px;
 }
 
-
+a{
+  color: #09d3ac;
+}
+a:hover{
+  text-decoration: none;
+}
 
 /** screen reader **/
 .sr-only {
@@ -96,6 +101,10 @@ header h1{
   text-shadow: 2px 2px 20px #fff79d; /** pretend to be a lit up sign **/
   margin: 40px 0 0 0;
   padding-bottom: 0;
+}
+header h1 a{
+  color: #fff;
+  text-decoration: none;
 }
 
 /* our tag line */
@@ -316,20 +325,24 @@ td.positive{
 
 
 /** login/register toggle **/
-ul.login-options{
+nav{
   margin-top: 3rem;
   display: inline-block;
 }
-ul.login-options li{
-  list-style-type: none;
-  display: inline;
-}
-ul.login-options li button{
+nav a{
   background: transparent;
   color: #006d58;
   border: none;
+  text-decoration: none;
+  border-radius: 4px;
+  padding: .4rem 1rem;
+  font-weight: bold;
+  margin: 0.2rem;
 }
-ul.login-options li button.active{
+nav a:hover,
+nav a:focus,
+nav a:active,
+nav a[aria-current="page"]{
   color: #09d3ac;
   border-bottom: 2px solid #09d3ac;
 }
