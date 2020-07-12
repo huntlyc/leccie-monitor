@@ -104,3 +104,33 @@ export const formatRelativeToDate = (dateString: string, relativeDateString: str
   //Happened at some point, show full date
   return `${d}/${m}/${y} at ${h}:${i}`;
 }
+
+export const humanReadableFirebaseError = (error: string):string => {
+  let humanError = "An error occured, please try later";
+  const errMap = [
+    {
+      key: 'auth/wrong-password',
+      value: "Incorrect login details!"
+    },
+    {
+      key: 'auth/user-not-found',
+      value: "Incorrect login details!"
+    },
+    {
+      key: 'auth/weak-password',
+      value: "Weak password, create a stronger one"
+    },
+    {
+      key: 'auth/email-already-in-use',
+      value: "You're already registered, please login"
+    },
+  ];
+
+  let matches = errMap.filter((e) => e.key === error);
+  if(matches){
+    humanError = matches[0].value;
+  }
+  console.log(matches);
+
+  return humanError;
+}

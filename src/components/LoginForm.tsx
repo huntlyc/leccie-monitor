@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { RouteComponentProps, Link, navigate } from '@reach/router';
 import { useFirebase } from '../hooks/useFirebase';
+import { humanReadableFirebaseError } from '../Utils';
 
 interface LoginFormProps extends RouteComponentProps{
 };
@@ -19,6 +20,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props: LoginFormProps) => 
             }else if(err.code){
                 errorMsg = err.code;
             }
+
+            errorMsg = humanReadableFirebaseError(errorMsg)
 
             setFormError(errorMsg);
         });
@@ -62,9 +65,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props: LoginFormProps) => 
         if(err === '') return null;
 
         return (
-            <ul data-testid="login-errors">
-                <li>{err}</li>
-            </ul>
+            <p className="danger">{err}</p>
         );
     };
     

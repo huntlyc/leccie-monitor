@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { RouteComponentProps, navigate } from '@reach/router';
 import { useFirebase } from '../hooks/useFirebase';
+import { humanReadableFirebaseError } from '../Utils';
 
 interface RegisterFormProps extends RouteComponentProps{
 };
@@ -18,6 +19,8 @@ const RegisterForm: FunctionComponent<RegisterFormProps> = (props: RegisterFormP
             }else if(err.code){
                 errorMsg = err.code;
             }
+
+            errorMsg = humanReadableFirebaseError(errorMsg);
 
             setFormError(errorMsg);
         });
@@ -61,9 +64,7 @@ const RegisterForm: FunctionComponent<RegisterFormProps> = (props: RegisterFormP
         if(err === '') return null;
 
         return (
-            <ul data-testid="login-errors">
-                <li>{err}</li>
-            </ul>
+            <p className="danger">{err}</p>
         );
     }
 
