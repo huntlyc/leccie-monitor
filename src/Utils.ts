@@ -106,7 +106,7 @@ export const formatRelativeToDate = (dateString: string, relativeDateString: str
 }
 
 export const humanReadableFirebaseError = (error: string):string => {
-  let humanError = "An error occured, please try later";
+  let humanError = "An error occurred, please try later";
   const errMap = [
     {
       key: 'auth/wrong-password',

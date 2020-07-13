@@ -130,7 +130,7 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
                 <br/>
                 <button type="submit">{buttonText()}</button>
             </form>
-            {props.action === FormType.Login && <p>Forgot your password? <Link to="/user/resetpassword">Reset your password</Link></p>}
+            {props.action === FormType.Login && <p>Forgot your password? <Link to="/user/reset-password">Reset your password</Link></p>}
         </>
     );
 };

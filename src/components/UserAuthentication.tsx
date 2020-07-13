@@ -19,14 +19,14 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = (props: U
                 <Link to="register">Register</Link>
             </nav>
             <Router>
-                <LoginForm 
+                <LoginForm
                     path="login"
                 />
-                <RegisterForm 
+                <RegisterForm
                     path="register"
                 />
                 <ResetPassword
-                    path="resetpassword"
+                    path="reset-password"
                 />
                 <UserDash
                     default
