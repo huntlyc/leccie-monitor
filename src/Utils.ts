@@ -18,8 +18,8 @@ type DatePiecesObject = {
 };
 
 /**
- * Given date string, returns zero padded values in object form 
- * 
+ * Given date string, returns zero padded values in object form
+ *
  * @param {string} dateString  - parsable date string
  * @returns {DatePiecesObject} parsed date in zero-padded object
  */
@@ -38,7 +38,7 @@ export const getDatePieces = (dateString: string): DatePiecesObject => {
 
 /**
  * Given two dates, return relative format (today at.., yesterday at... e.t.c)
- * 
+ *
  * @param {string} dateStr - date string to format
  * @param {string} relativeDateString - date string to format
  * @return {string} human readable date in a relative format
@@ -50,14 +50,14 @@ export const formatRelativeToDate = (dateString: string, relativeDateString: str
   const relativeDate = new Date(relativeDateTimeStamp);
   const theDate = new Date(dateTimestamp);
 
-  if(dateTimestamp > relativeDateTimeStamp){ 
-    throw new Error('Can not compare into the future'); 
+  if(dateTimestamp > relativeDateTimeStamp){
+    throw new Error('Can not compare into the future');
   }
 
   const dateDiff = relativeDate.getTime() - theDate.getTime();
   const dateDiffInMins = Math.round((dateDiff/1000)/60);
   const {d,m,y,h,i} = getDatePieces(dateString);
-  
+
   //happened less than a min ago
   if(dateDiffInMins < 1){
     return 'just now';
@@ -134,3 +134,13 @@ export const humanReadableFirebaseError = (error: string):string => {
 
   return humanError;
 }
+
+/**
+ * Std SO email regex
+ * @param email - email to validate
+ * @return boolean
+ */
+export const isValidEmail = (email: string) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+};

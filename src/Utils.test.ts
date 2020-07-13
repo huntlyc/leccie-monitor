@@ -1,4 +1,4 @@
-import {getDatePieces, formatRelativeToDate} from './Utils';
+import {getDatePieces, formatRelativeToDate, isValidEmail} from './Utils';
 
 test('it splits a date into the right pieces', () => {
     expect(getDatePieces('2020/02/01 09:08:00')).toEqual({"y": "2020", "m": "02", "d": "01", "h": "09", "i": "08"});
@@ -30,6 +30,13 @@ test('formats relative dates', () => {
      */
     expect(formatRelativeToDate('2020/05/25 00:00:00','2020/05/31 00:00:00')).toBe('monday at 00:00');
 
-    // Couple of months back 
+    // Couple of months back
     expect(formatRelativeToDate('2020/02/01 00:00:00','2020/05/31 00:00:00')).toBe('01/02/2020 at 00:00');
 });
+
+describe('email validation', () => {
+    test('it validates bob@bob.com but not bob[at]bob[dot]com', () => {
+        expect(isValidEmail('bob@bob.com')).toBeTruthy();
+        expect(isValidEmail('bob[at]bob[dot]com')).toBeFalsy();
+    });
+})

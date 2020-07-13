@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { RouteComponentProps, navigate } from '@reach/router';
 import { useFirebase } from '../hooks/useFirebase';
-import { humanReadableFirebaseError } from '../Utils';
+import { humanReadableFirebaseError, isValidEmail } from '../Utils';
 
 interface RegisterFormProps extends RouteComponentProps{
 };
@@ -30,11 +30,6 @@ const RegisterForm: FunctionComponent<RegisterFormProps> = (props: RegisterFormP
         let formIsValid = true;
         const email = (document.querySelector('input[name=email]') as HTMLInputElement).value;
         const password = (document.querySelector('input[name=password]') as HTMLInputElement).value;
-        const validateEmail = (email: string) => {
-            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        };
-
 
         e.preventDefault();
 
@@ -42,7 +37,7 @@ const RegisterForm: FunctionComponent<RegisterFormProps> = (props: RegisterFormP
         if(email === "" || password === ""){
             setFormError('Please enter your login details');
             formIsValid = false;
-        }else if(!validateEmail(email)){
+        }else if(!isValidEmail(email)){
             setFormError('Please enter a valid email');
             formIsValid = false;
         }
@@ -64,7 +59,7 @@ const RegisterForm: FunctionComponent<RegisterFormProps> = (props: RegisterFormP
         if(err === '') return null;
 
         return (
-            <p className="danger">{err}</p>
+            <p data-testid="login-errors" className="danger">{err}</p>
         );
     }
 
@@ -74,7 +69,7 @@ const RegisterForm: FunctionComponent<RegisterFormProps> = (props: RegisterFormP
 
         if (firebase && firebase.user !== false) {
             if (firebase.dataStore && isActive) {
-               navigate('/'); 
+               navigate('/');
             }
         }
 
