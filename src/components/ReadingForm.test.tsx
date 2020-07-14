@@ -1,28 +1,25 @@
 import React from 'react';
-import ReadingForm from './InputForm';
+import ReadingForm from './ReadingForm';
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect';
 
 
 test('it renders without crashing', () => {
     const mockSuccessFN = jest.fn((reading: string) => {});
-    const mockClearFN = jest.fn();
-    render(<ReadingForm onSuccess={mockSuccessFN} onClear={mockClearFN} />);
+    render(<ReadingForm onSuccess={mockSuccessFN}  />);
 });
 
 
 test('it calls success prop fn after valid value', () =>{
     const mockSuccessFN = jest.fn((reading: string) => {});
-    const mockClearFN = jest.fn();
 
     const inputReadingValue = "5.04";
 
-    render(<ReadingForm onSuccess={mockSuccessFN} onClear={mockClearFN} />);
+    render(<ReadingForm onSuccess={mockSuccessFN}  />);
 
     fireEvent.change(screen.getByRole('textbox'), { target: { value: inputReadingValue } });
     fireEvent.click(screen.getByRole('button'));
 
-    expect(mockClearFN).toBeCalledTimes(0);
 
     expect(mockSuccessFN).toBeCalledTimes(1);
     expect(mockSuccessFN).toBeCalledWith(inputReadingValue);
@@ -32,24 +29,21 @@ test('it calls success prop fn after valid value', () =>{
 
 test('it calls clear prop fn after "clear"', () =>{
     const mockSuccessFN = jest.fn((reading: string) => {});
-    const mockClearFN = jest.fn();
 
     const inputReadingValue = "clear";
 
-    render(<ReadingForm onSuccess={mockSuccessFN} onClear={mockClearFN} />);
+    render(<ReadingForm onSuccess={mockSuccessFN}  />);
 
     fireEvent.change(screen.getByRole('textbox'), { target: { value: inputReadingValue } });
     fireEvent.click(screen.getByRole('button'));
 
-    expect(mockClearFN).toBeCalledTimes(1);
 });
 
 
 test('it handles invalid submission helpfully', () =>{
     const mockSuccessFN = jest.fn((reading: string) => {});
-    const mockClearFN = jest.fn();
 
-    render(<ReadingForm onSuccess={mockSuccessFN} onClear={mockClearFN} />);
+    render(<ReadingForm onSuccess={mockSuccessFN}  />);
 
     const input = screen.getByRole('textbox');
     const button = screen.getByRole('button');
@@ -59,7 +53,6 @@ test('it handles invalid submission helpfully', () =>{
     fireEvent.click(button);
 
     expect(mockSuccessFN).toBeCalledTimes(0);
-    expect(mockClearFN).toBeCalledTimes(0);
 
     expect(input.classList.contains('error')).toBeTruthy();
     expect(screen.getByText('Please enter number or "Clear"'));
@@ -68,9 +61,8 @@ test('it handles invalid submission helpfully', () =>{
 
 test('it recovers from an invalid state on next good value', () =>{
     const mockSuccessFN = jest.fn((reading: string) => {});
-    const mockClearFN = jest.fn();
 
-    render(<ReadingForm onSuccess={mockSuccessFN} onClear={mockClearFN} />);
+    render(<ReadingForm onSuccess={mockSuccessFN}  />);
 
     const input = screen.getByRole('textbox');
     const button = screen.getByRole('button');
@@ -80,8 +72,6 @@ test('it recovers from an invalid state on next good value', () =>{
     fireEvent.click(button);
 
     expect(mockSuccessFN).toBeCalledTimes(0);
-    expect(mockClearFN).toBeCalledTimes(0);
-
     expect(input.classList.contains('error')).toBeTruthy();
     expect(screen.getByText('Please enter number or "Clear"'));
 

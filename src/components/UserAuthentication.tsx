@@ -2,7 +2,6 @@ import React, { FunctionComponent } from 'react';
 import LoginForm from './LoginForm';
 import { RouteComponentProps, Router, Link } from '@reach/router';
 import RegisterForm from './RegisterForm';
-import UserDash from './UserDash';
 import ResetPassword from './ResetPassword';
 
 
@@ -27,9 +26,6 @@ const UserAuthentication: FunctionComponent<UserAuthenticationProps> = (props: U
                 />
                 <ResetPassword
                     path="reset-password"
-                />
-                <UserDash
-                    default
                 />
             </Router>
         </>

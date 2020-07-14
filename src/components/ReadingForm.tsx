@@ -3,11 +3,10 @@ import React, { FunctionComponent, useState } from 'react';
 
 type ReadingFormProps = {
     onSuccess: (reading: string) => void,
-    onClear: () => void,
 };
 
 
-const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) => {
+const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess}) => {
     const [invalidInput, updateErrorStatusTo] = useState<boolean>(false);
     const onReadingSubmission = (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,9 +27,6 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) =
                 const readingValue = parseFloat(readingInput.value).toFixed(2);
                 onSuccess(readingValue);
                 resetForm();
-            } else if(readingInput.value !== '' && readingInput.value.toLowerCase() === 'clear') {
-                onClear();
-                resetForm();
             } else {
                 updateErrorStatusTo(true);
             }
@@ -41,7 +37,7 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess,onClear}) =
         <form onSubmit={onReadingSubmission}>
             <div className="input-row">
                 <label htmlFor="reading" className="sr-only">Latest Reading</label>
-                <input className={invalidInput ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Reading (e.g. 34.22)" />
+                <input className={invalidInput ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Add Reading (e.g. 34.22)" />
                 <button><span className="sr-only">Submit Reading</span>+</button>
             </div>
             {invalidInput && <p className="error-message">Please enter number or "Clear"</p>}

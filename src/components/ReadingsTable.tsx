@@ -4,9 +4,12 @@ import {formatRelativeToDate} from '../Utils';
 
 
 type ReadingTableProps = {
-    previousReadings: IReading[]
+    previousReadings: IReading[],
+    isLoading: boolean
 }
-const ReadingTable:React.FC<ReadingTableProps> = ({previousReadings}) => {
+const ReadingTable:React.FC<ReadingTableProps> = ({previousReadings, isLoading}) => {
+
+    if (isLoading) return <p>Loading, please wait...</p>;
 
     if (!previousReadings || previousReadings.length === 0) return <p data-testid="no-reading-message">Enter your first reading to get started!</p>;
 

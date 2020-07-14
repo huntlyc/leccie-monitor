@@ -6,7 +6,11 @@ import DataStore from "../components/Datastore";
 import { UserDatastore } from "../components/FirebaseDatastore";
 
 firebase.initializeApp(firebaseConfig);
-firebase.firestore().enablePersistence().catch((err) => console.log(err));
+
+// Don't do persistence when tests run, node env doesn't support indexdb
+if(process.env.NODE_ENV !== 'test'){
+    firebase.firestore().enablePersistence().catch((err) => console.log(err));
+}
 
 
 interface IProps {
@@ -20,6 +24,8 @@ type FirebaseProvider = {
     signin: (email: string, password: string) => Promise<firebase.User | null>;
     signup: (email: string, password: string) => Promise<firebase.User | null>;
     signout: () => Promise<void>
+    reAuth: (email: string, password: string) => false | Promise<firebase.auth.UserCredential>
+    deleteAccount: () => false | Promise<void>
     sendPasswordResetEmail: (email: string) => Promise<boolean>;
     confirmPasswordReset: (code: string, password: string) => Promise<boolean>;
 };
@@ -66,6 +72,27 @@ function useFirebaseProvider(): FirebaseProvider {
             });
     };
 
+    const reAuth = (email: string, password: string) => {
+
+        if(user){
+            const credential = firebase.auth.EmailAuthProvider.credential( email, password);
+            // Now you can use that to reauthenticate
+            return user.reauthenticateWithCredential(credential);
+        }
+
+        return false;
+    };
+
+    const deleteAccount = () => {
+        if(user){
+            return user.delete().then(() => {
+                setUser(null);
+                setDataStore(null);
+            });
+        }
+        return false;
+    }
+
 
     const signout = () => {
         return firebase
@@ -78,22 +105,22 @@ function useFirebaseProvider(): FirebaseProvider {
     };
 
 
-    const sendPasswordResetEmail = (email:string) => {
-      return firebase
-        .auth()
-        .sendPasswordResetEmail(email)
-        .then(() => {
-          return true;
-        });
+    const sendPasswordResetEmail = (email: string) => {
+        return firebase
+            .auth()
+            .sendPasswordResetEmail(email)
+            .then(() => {
+                return true;
+            });
     };
 
-    const confirmPasswordReset = (code:string, password:string) => {
-      return firebase
-        .auth()
-        .confirmPasswordReset(code, password)
-        .then(() => {
-          return true;
-        });
+    const confirmPasswordReset = (code: string, password: string) => {
+        return firebase
+            .auth()
+            .confirmPasswordReset(code, password)
+            .then(() => {
+                return true;
+            });
     };
 
 
@@ -120,6 +147,8 @@ function useFirebaseProvider(): FirebaseProvider {
         signin,
         signup,
         signout,
+        reAuth,
+        deleteAccount,
         sendPasswordResetEmail,
         confirmPasswordReset
     };
