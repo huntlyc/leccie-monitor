@@ -2,18 +2,20 @@ import React, { FunctionComponent, useState } from 'react';
 import './App.css';
 import Home from './Home';
 import UserAuthentication from './components/UserAuthentication';
-
 import { Router, Link } from "@reach/router"
 import UserDash from './components/UserDash';
 import { useFirebase } from './hooks/useFirebase';
+
 
 const App: FunctionComponent = () => {
     const firebase = useFirebase();
     const [showMenu, shouldShowMenu] = useState(false);
 
+
     const toggleMenu = () => {
         shouldShowMenu(!showMenu);
     };
+
 
     const userLoggedOut = () => {
         shouldShowMenu(false);
@@ -23,11 +25,13 @@ const App: FunctionComponent = () => {
         }
     };
 
+
     const clearReadings = () => {
         if (firebase && firebase?.user && firebase?.dataStore) {
             firebase.dataStore.clearAllReadings();
         }
     };
+
 
     return (
         <div className="app">
@@ -45,7 +49,6 @@ const App: FunctionComponent = () => {
                             </ul>
                         </div>
                         <button onClick={userLoggedOut}>Logout</button>
-
                     </div>
                 </>
             }
@@ -59,7 +62,7 @@ const App: FunctionComponent = () => {
             </Router>
         </div>
     );
-}
+};
 
 
 export default App;

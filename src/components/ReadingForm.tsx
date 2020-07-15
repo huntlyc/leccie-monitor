@@ -25,6 +25,7 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess}) => {
 
             if (!isNaN(parseFloat(readingInput.value))) {
                 const readingValue = parseFloat(readingInput.value).toFixed(2);
+
                 onSuccess(readingValue);
                 resetForm();
             } else {
@@ -32,6 +33,7 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess}) => {
             }
         }
     };
+
 
     return (
         <form onSubmit={onReadingSubmission}>

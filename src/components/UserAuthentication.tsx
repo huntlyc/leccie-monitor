@@ -5,12 +5,7 @@ import RegisterForm from './RegisterForm';
 import ResetPassword from './ResetPassword';
 
 
-interface UserAuthenticationProps extends RouteComponentProps{
-    // Nothing extra to add...
-}
-
-
-const UserAuthentication: FunctionComponent<UserAuthenticationProps> = (props: UserAuthenticationProps) => {
+const UserAuthentication: FunctionComponent<RouteComponentProps> = () => {
     return (
         <>
             <nav>

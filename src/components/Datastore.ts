@@ -1,6 +1,7 @@
 import TestDatastore from "./TestDataStore";
 import FirebaseDataStore from "./FirebaseDatastore";
 
+
 const DataStore = {
     get: function (uid: string) {
         let dataStore;
@@ -11,6 +12,7 @@ const DataStore = {
         }
         return dataStore;
     }
-}
+};
+
 
 export default DataStore;

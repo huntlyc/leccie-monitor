@@ -4,9 +4,11 @@ import { useFirebase } from '../hooks/useFirebase';
 import { humanReadableFirebaseError } from '../Utils';
 import useAuthProtected from '../hooks/useAuthProtected';
 
+
 interface UserDashProps extends RouteComponentProps{
     clearReadings: () => void;
 }
+
 
 const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
     
@@ -23,14 +25,17 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
         }
     };
 
+    
     const initAccountDelete = () => {
         setNeedsReAuth(true);
-    }
+    };
 
 
     const confirmDelete = (e: React.FormEvent) => {
         e.preventDefault();
+
         if(firebase && firebase.user && firebase.user.email !== null){
+
             const credential = firebase.reAuth(
                 firebase.user.email, 
                 (document.getElementsByName('password')[0] as HTMLInputElement).value
@@ -51,14 +56,14 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
                     errorMsg = humanReadableFirebaseError(errorMsg)
 
                     setActionMsg(errorMsg);
-                })
+                });
             }
         } 
     };
     
 
-
     const displayContent = () => {
+
         if(!isAuthorized) return <p>Please wait...</p>;
 
         return (
@@ -82,5 +87,6 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
 
     return displayContent();
 };
+
 
 export default UserDash;

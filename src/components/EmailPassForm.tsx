@@ -1,4 +1,3 @@
-
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { RouteComponentProps, Link, navigate } from '@reach/router';
 import { useFirebase } from '../hooks/useFirebase';
@@ -20,6 +19,7 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
     const [formError,setFormError] = useState('');
     const firebase = useFirebase();
 
+    
     const login = (email:string, pass:string) => {
         return firebase?.signin(email, pass).catch((err) => {
             let errorMsg = '';
@@ -36,6 +36,7 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
         });
     };
 
+    
     const register = (email:string, pass:string) => {
         return firebase?.signup(email, pass).catch((err) => {
             let errorMsg = '';
@@ -52,6 +53,7 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
         });
     };
 
+    
     const onSubmit = (e: React.FormEvent) =>{
         let formIsValid = true;
         const email = (document.querySelector('input[name=email]') as HTMLInputElement).value;
@@ -71,32 +73,21 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
 
         if(formIsValid){
             switch(props.action){
-                case FormType.Login:
-                    login(email, password);
-                break;
-                case FormType.Register:
-                    register(email, password);
-                break;
+                case FormType.Login: login(email, password); break;
+                case FormType.Register: register(email, password); break;
             }
         }
     };
 
 
-
     const displayErrorIfAny = (formError: string) => {
-        let err = '';
+        if(formError === '') return null;
 
-        if(formError){
-            err = formError;
-        }
-
-        if(err === '') return null;
-
-        return (
-            <p data-testid="login-errors" className="danger">{err}</p>
-        );
+        return <p data-testid="login-errors" className="danger">{formError}</p>;
     };
 
+    
+    // User already authenticated, redirect to home
     useEffect(() => {
         let isActive = true;
 
@@ -105,7 +96,6 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
                navigate('/');
             }
         }
-
 
         return () => { isActive = false };
     }, [firebase]);
@@ -116,7 +106,8 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
             case FormType.Login: return 'Sign in'
             case FormType.Register: return 'Sign up'
         }
-    }
+    };
+
 
     return (
         <>

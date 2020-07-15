@@ -7,9 +7,11 @@ import { useFirebase } from './hooks/useFirebase';
 import { RouteComponentProps } from '@reach/router';
 import useAuthProtected from './hooks/useAuthProtected';
 
+
 interface HomeProps extends RouteComponentProps {
     // Nothing extra to add...
-}
+};
+
 
 const Home: FunctionComponent<HomeProps> = (props: HomeProps) => {
 

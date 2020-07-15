@@ -2,11 +2,8 @@ import React, { FunctionComponent } from 'react';
 import { RouteComponentProps } from '@reach/router';
 import EmailPassForm, { FormType } from './EmailPassForm';
 
-interface LoginFormProps extends RouteComponentProps{
-};
 
-
-const LoginForm: FunctionComponent<LoginFormProps> = () => {
+const LoginForm: FunctionComponent<RouteComponentProps> = () => {
     return <EmailPassForm action={FormType.Login} />;
 };
 

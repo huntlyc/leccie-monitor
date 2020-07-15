@@ -1,7 +1,4 @@
-interface IReading {
+export default interface IReading {
     date: string;
     reading: string;
-}
-
-
-export default IReading;
+};
