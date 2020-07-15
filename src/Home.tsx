@@ -5,7 +5,7 @@ import ReadingTable from './components/ReadingsTable';
 import IReading from './components/IReading';
 import { useFirebase } from './hooks/useFirebase';
 import { RouteComponentProps } from '@reach/router';
-import { useNavigate } from "@reach/router"
+import useAuthProtected from './hooks/useAuthProtected';
 
 interface HomeProps extends RouteComponentProps {
     // Nothing extra to add...
@@ -13,8 +13,8 @@ interface HomeProps extends RouteComponentProps {
 
 const Home: FunctionComponent<HomeProps> = (props: HomeProps) => {
 
-    const navigate = useNavigate();
     const [isLoading, setIsLoadingTo] = useState(true);
+    const [isAuthorized] = useAuthProtected();
     const firebase = useFirebase();
     const [previousReadings, updatePreviousReadings] = useState<IReading[]>([]);
 
@@ -56,26 +56,20 @@ const Home: FunctionComponent<HomeProps> = (props: HomeProps) => {
     useEffect(() => {
         let isActive = true;
 
-        if (firebase && firebase.user !== false) {
-            if (isActive) {
-                setIsLoadingTo(false);
-            }
-            if (firebase.dataStore) {
-                setIsLoadingTo(true);
-                firebase.dataStore.getAllReadings().then((res) => {
-                    if (isActive) {
-                        if (res.length > 0) {
-                            updatePreviousReadings(res);
-                        }
+        if (isAuthorized && firebase && firebase.dataStore) {
+            firebase.dataStore.getAllReadings().then((res) => {
+                if (isActive) {
+                    if (res.length > 0) {
+                        updatePreviousReadings(res);
                     }
-                    setIsLoadingTo(false);
-                });
-            }
+                }
+                setIsLoadingTo(false);
+            });
         }
 
 
         return () => { isActive = false };
-    }, [firebase]);
+    }, [isAuthorized, firebase]);
 
 
     const getMainContentArea = () => {
@@ -83,11 +77,7 @@ const Home: FunctionComponent<HomeProps> = (props: HomeProps) => {
 
         if (!firebase) return null;
 
-        if (firebase.user) {
-            return <ReadingTable previousReadings={previousReadings} isLoading={isLoading} />;
-        } else {
-            navigate('/auth/login')
-        }
+        return <ReadingTable previousReadings={previousReadings} isLoading={isLoading} />;
     };
 
 

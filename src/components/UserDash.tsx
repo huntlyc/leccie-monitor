@@ -1,7 +1,8 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { RouteComponentProps, navigate } from '@reach/router';
+import React, { FunctionComponent, useState } from 'react';
+import { RouteComponentProps } from '@reach/router';
 import { useFirebase } from '../hooks/useFirebase';
 import { humanReadableFirebaseError } from '../Utils';
+import useAuthProtected from '../hooks/useAuthProtected';
 
 interface UserDashProps extends RouteComponentProps{
     clearReadings: () => void;
@@ -11,20 +12,9 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
     
     const [needsReAuth, setNeedsReAuth] = useState(false);
     const [actionMsg, setActionMsg] = useState('');
-    const [isLoading, setIsLoadingTo] = useState(true);
+    const [isAuthorized] = useAuthProtected();
     const firebase = useFirebase();
 
-    useEffect(() => {
-        let isActive = true;
-
-        if (firebase && firebase.user !== false) {
-            if(isActive){
-                setIsLoadingTo(false);
-            }
-        }
-
-        return () => { isActive = false };
-    }, [firebase]);
 
     const clearReadings = () => {
         if(window.confirm('Are you sure?! No take-backs!')){
@@ -69,31 +59,25 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
 
 
     const displayContent = () => {
-        if(isLoading) return <p>Please wait...</p>;
+        if(!isAuthorized) return <p>Please wait...</p>;
 
-
-        if(firebase && firebase.user){
-            return (
-                <>
-                    <h1>Account Settings</h1>
-                    {actionMsg !== '' && <p>{actionMsg}</p>}
-                    <ul className="button-group">
-                        <li><button onClick={clearReadings}>Clear Readings</button></li>
-                        <li><button onClick={initAccountDelete}>Delete Account</button></li>
-                    </ul>
-                    {needsReAuth && 
-                        <form onSubmit={confirmDelete}>
-                            <label htmlFor="password">Password</label><br/>
-                            <input type="password" name="password"/><br/><br/>
-                            <button>Delete Me!</button>
-                        </form>
-                    }
-                </>
-            )
-        }else{
-            navigate('/auth/login');
-            return <p>Error, please login again</p>;
-        }
+        return (
+            <>
+                <h1>Account Settings</h1>
+                {actionMsg !== '' && <p>{actionMsg}</p>}
+                <ul className="button-group">
+                    <li><button onClick={clearReadings}>Clear Readings</button></li>
+                    <li><button onClick={initAccountDelete}>Delete Account</button></li>
+                </ul>
+                {needsReAuth && 
+                    <form onSubmit={confirmDelete}>
+                        <label htmlFor="password">Password</label><br/>
+                        <input type="password" name="password"/><br/><br/>
+                        <button>Delete Me!</button>
+                    </form>
+                }
+            </>
+        )
     }
 
     return displayContent();
