@@ -18,6 +18,8 @@ interface EmailPassFormProps extends RouteComponentProps{
 const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFormProps) => {
     const [formError,setFormError] = useState('');
     const firebase = useFirebase();
+    const [email, setEmailTo] = useState('');
+    const [password, setPasswordTo] = useState('');
 
     
     const login = (email:string, pass:string) => {
@@ -56,12 +58,8 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
     
     const onSubmit = (e: React.FormEvent) =>{
         let formIsValid = true;
-        const email = (document.querySelector('input[name=email]') as HTMLInputElement).value;
-        const password = (document.querySelector('input[name=password]') as HTMLInputElement).value;
-
 
         e.preventDefault();
-
 
         if(email === "" || password === ""){
             setFormError('Please enter your login details');
@@ -109,15 +107,25 @@ const EmailPassForm: FunctionComponent<EmailPassFormProps> = (props: EmailPassFo
     };
 
 
+    const emailChangeHandler = (e: React.FormEvent) => {
+        setEmailTo((e.target as HTMLInputElement).value);
+    };
+
+
+    const passwordChangeHandler = (e: React.FormEvent) => {
+        setPasswordTo((e.target as HTMLInputElement).value);
+    };
+
+
     return (
         <>
             {displayErrorIfAny(formError)}
             <form data-testid="login" action="post" onSubmit={onSubmit}>
                 <label htmlFor="email">Email</label><br/>
-                <input type="email" id="email" name="email"/><br/>
+                <input onChange={emailChangeHandler} type="email" id="email" name="email"/><br/>
                 <br/>
                 <label htmlFor="password">Password</label><br/>
-                <input type="password" id="password" name="password"/><br/>
+                <input onChange={passwordChangeHandler} type="password" id="password" name="password"/><br/>
                 <br/>
                 <button type="submit">{buttonText()}</button>
             </form>

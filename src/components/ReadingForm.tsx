@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useRef } from 'react';
 
 
 type ReadingFormProps = {
@@ -8,23 +8,23 @@ type ReadingFormProps = {
 
 const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess}) => {
     const [invalidInput, updateErrorStatusTo] = useState<boolean>(false);
+    const [readingVal, setReadingValTo] = useState('');
+    const readingInput = useRef<HTMLInputElement>(null);
+
+    const resetForm = () => {
+        setReadingValTo('');
+        if(readingInput && readingInput.current){
+            readingInput.current.focus();
+        }
+
+        updateErrorStatusTo(false);
+    };
     const onReadingSubmission = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const readingInput: HTMLInputElement | null = (document.getElementById('reading') as HTMLInputElement);
-
-        if (readingInput){
-
-            const resetForm = () => {
-                readingInput.value = '';
-                readingInput.focus();
-
-                updateErrorStatusTo(false);
-            };
-
-
-            if (!isNaN(parseFloat(readingInput.value))) {
-                const readingValue = parseFloat(readingInput.value).toFixed(2);
+        if (readingVal){
+            if (!isNaN(parseFloat(readingVal))) {
+                const readingValue = parseFloat(readingVal).toFixed(2);
 
                 onSuccess(readingValue);
                 resetForm();
@@ -35,11 +35,15 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess}) => {
     };
 
 
+    const readingChangeHandler = (e: React.FormEvent) => {
+        setReadingValTo((e.target as HTMLInputElement).value);
+    }
+
     return (
         <form onSubmit={onReadingSubmission}>
             <div className="input-row">
                 <label htmlFor="reading" className="sr-only">Latest Reading</label>
-                <input className={invalidInput ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Add Reading (e.g. 34.22)" />
+                <input ref={readingInput} onChange={readingChangeHandler} className={invalidInput ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Add Reading (e.g. 34.22)"  value={readingVal}/>
                 <button><span className="sr-only">Submit Reading</span>+</button>
             </div>
             {invalidInput && <p className="error-message">Please enter number or "Clear"</p>}

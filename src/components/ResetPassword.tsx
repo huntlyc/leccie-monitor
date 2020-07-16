@@ -7,6 +7,7 @@ const ResetPassword:FunctionComponent<RouteComponentProps> = (props: RouteCompon
     const firebase = useFirebase();
     const [formError, setFormError] = useState('');
     const [hasSubmitted, setHasSubmitted] = useState(false);
+    const [email, setEmailTo] = useState('');
 
 
     const displayErrorIfAny = (formError: string) => {
@@ -20,7 +21,6 @@ const ResetPassword:FunctionComponent<RouteComponentProps> = (props: RouteCompon
         e.preventDefault();
 
         let formIsValid = true;
-        const email = (document.querySelector('input[name=email]') as HTMLInputElement).value;
         const validateEmail = (email: string) => {
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
@@ -40,6 +40,9 @@ const ResetPassword:FunctionComponent<RouteComponentProps> = (props: RouteCompon
         }
     };
 
+    const emailChangeHandler = (e: React.FormEvent) => {
+        setEmailTo((e.target as HTMLInputElement).value);
+    }
 
     return (
         <>
@@ -48,7 +51,7 @@ const ResetPassword:FunctionComponent<RouteComponentProps> = (props: RouteCompon
             {!hasSubmitted && 
                 <form action="post" onSubmit={onSubmit}>
                     <label htmlFor="email">Email</label><br/>
-                    <input type="email" id="email" name="email"/><br/>
+                    <input onChange={emailChangeHandler} type="email" id="email" name="email"/><br/>
                     <br/>
                     <button type="submit">Reset</button>
                 </form>

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
 import { RouteComponentProps } from '@reach/router';
 import { useFirebase } from '../hooks/useFirebase';
 import { humanReadableFirebaseError } from '../Utils';
@@ -14,9 +14,10 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
     
     const [needsReAuth, setNeedsReAuth] = useState(false);
     const [actionMsg, setActionMsg] = useState('');
+    const [password, setPasswordTo] = useState('');
     const [isAuthorized] = useAuthProtected();
     const firebase = useFirebase();
-
+    const passwordRef = useRef<HTMLInputElement>(null);
 
     const clearReadings = () => {
         if(window.confirm('Are you sure?! No take-backs!')){
@@ -31,6 +32,12 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
     };
 
 
+    useEffect(() => {
+        if(needsReAuth && passwordRef && passwordRef.current){
+            passwordRef.current.focus()
+        }
+    }, [needsReAuth])
+
     const confirmDelete = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -38,11 +45,12 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
 
             const credential = firebase.reAuth(
                 firebase.user.email, 
-                (document.getElementsByName('password')[0] as HTMLInputElement).value
+                password
             );
 
             if(credential !== false){
                 credential.then((credentail) => {   
+                    firebase.dataStore?.clearAllReadings();
                     firebase.deleteAccount();
                 }).catch((err) => {
                     let errorMsg = '';
@@ -62,6 +70,10 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
     };
     
 
+    const passwordChangeHandler = (e: React.FormEvent) => {
+        setPasswordTo((e.target as HTMLInputElement).value);
+    };
+
     const displayContent = () => {
 
         if(!isAuthorized) return <p>Please wait...</p>;
@@ -77,7 +89,7 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
                 {needsReAuth && 
                     <form onSubmit={confirmDelete}>
                         <label htmlFor="password">Password</label><br/>
-                        <input type="password" name="password"/><br/><br/>
+                        <input ref={passwordRef} onChange={passwordChangeHandler} type="password" name="password"/><br/><br/>
                         <button>Delete Me!</button>
                     </form>
                 }
