@@ -13,7 +13,7 @@ export interface UserDatastore{
 class FirebaseDataStore implements UserDatastore{
     uid: string;
     readingRef?: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>;
-
+    
 
     constructor(uid: string = ''){
         this.uid = uid;

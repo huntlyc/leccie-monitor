@@ -3,6 +3,7 @@ import ReadingForm from './ReadingForm';
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect';
 
+const numErrMsg = "Please enter a numeric value";
 
 test('it renders without crashing', () => {
     const mockSuccessFN = jest.fn((reading: string) => {});
@@ -23,7 +24,7 @@ test('it calls success prop fn after valid value', () =>{
 
     expect(mockSuccessFN).toBeCalledTimes(1);
     expect(mockSuccessFN).toBeCalledWith(inputReadingValue);
-    expect(screen.queryByText('Please enter number or "Clear"')).not.toBeInTheDocument();
+    expect(screen.queryByText(numErrMsg)).not.toBeInTheDocument();
 });
 
 
@@ -55,7 +56,7 @@ test('it handles invalid submission helpfully', () =>{
     expect(mockSuccessFN).toBeCalledTimes(0);
 
     expect(input.classList.contains('error')).toBeTruthy();
-    expect(screen.getByText('Please enter number or "Clear"'));
+    expect(screen.getByText(numErrMsg));
 });
 
 
@@ -73,12 +74,12 @@ test('it recovers from an invalid state on next good value', () =>{
 
     expect(mockSuccessFN).toBeCalledTimes(0);
     expect(input.classList.contains('error')).toBeTruthy();
-    expect(screen.getByText('Please enter number or "Clear"'));
+    expect(screen.getByText(numErrMsg));
 
     //Send valid entry
     fireEvent.change(input, { target: { value: '1.04' } });
     fireEvent.click(button);
 
     expect(input.classList.contains('error')).toBeFalsy();
-    expect(screen.queryByText('Please enter number or "Clear"')).toBeNull();
+    expect(screen.queryByText(numErrMsg)).toBeNull();
 });

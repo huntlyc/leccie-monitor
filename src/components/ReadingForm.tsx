@@ -46,7 +46,7 @@ const ReadingForm: FunctionComponent<ReadingFormProps> = ({onSuccess}) => {
                 <input ref={readingInput} onChange={readingChangeHandler} className={invalidInput ? 'error' : '' } id="reading" type="text" inputMode="decimal" autoComplete="off" placeholder="Add Reading (e.g. 34.22)"  value={readingVal}/>
                 <button><span className="sr-only">Submit Reading</span>+</button>
             </div>
-            {invalidInput && <p className="error-message">Please enter number or "Clear"</p>}
+            {invalidInput && <p className="error-message">Please enter a numeric value</p>}
         </form>
     );
 }

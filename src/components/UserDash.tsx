@@ -36,7 +36,7 @@ const UserDash:FunctionComponent<UserDashProps> = (props: UserDashProps) => {
         if(needsReAuth && passwordRef && passwordRef.current){
             passwordRef.current.focus()
         }
-    }, [needsReAuth])
+    }, [needsReAuth]);
 
     const confirmDelete = (e: React.FormEvent) => {
         e.preventDefault();

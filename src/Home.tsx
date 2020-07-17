@@ -92,7 +92,6 @@ const Home: FunctionComponent<HomeProps> = (props: HomeProps) => {
     }
 
 
-
     return (
         <>
             {firebase && firebase.user &&
