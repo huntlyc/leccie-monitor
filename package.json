@@ -4,15 +4,15 @@
   "private": true,
   "dependencies": {
     "@reach/router": "^1.3.4",
-    "@types/jest": "26.0.3",
-    "@types/node": "14.0.14",
-    "@types/react": "16.9.41",
+    "@types/jest": "26.0.14",
+    "@types/node": "14.11.8",
+    "@types/react": "16.9.51",
     "@types/react-dom": "16.9.8",
-    "dexie": "^3.0.1",
+    "dexie": "^3.0.2",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
-    "react-scripts": "3.4.1",
-    "typescript": "3.9.5"
+    "react-scripts": "3.4.3",
+    "typescript": "4.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -37,14 +37,14 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.11.0",
-    "@testing-library/react": "^10.4.3",
-    "@testing-library/user-event": "^12.0.11",
-    "@types/reach__router": "^1.3.5",
-    "cypress": "^4.9.0",
-    "fake-indexeddb": "^3.0.1",
-    "firebase": "^7.15.5",
-    "firebase-admin": "^8.12.1",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.0.4",
+    "@testing-library/user-event": "^12.1.7",
+    "@types/reach__router": "^1.3.6",
+    "cypress": "^5.3.0",
+    "fake-indexeddb": "^3.1.2",
+    "firebase": "^7.23.0",
+    "firebase-admin": "^9.2.0",
     "jest-environment-jsdom-sixteen": "^1.0.3"
   }
 }
